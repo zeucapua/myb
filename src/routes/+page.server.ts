@@ -1,26 +1,15 @@
 import { error, redirect, type Actions, type ServerLoadEvent } from "@sveltejs/kit";
 import { isValidHandle } from "@atproto/syntax";
 import { atclient } from "$lib/server/client";
-import { getIronSession } from "iron-session";
-import { IRON_SESSION_PASSWORD } from "$env/static/private";
 import { Agent } from "@atproto/api";
 
-type Session = { did: string };
-
-export async function load({ request }: ServerLoadEvent) {
-  const session = await getIronSession<Session>(request, new Response(), {
-    cookieName: 'sid',
-    password: IRON_SESSION_PASSWORD
-  });
-  console.log("server LOAD", { session });
-  if (!session.did) return { agent: null }
-  try {
-    const oauthSession = await atclient.restore(session.did);
-    return oauthSession ? new Agent(oauthSession) : null;
-  } catch (err) {
-    session.destroy()
-    return { agent: null }
-  }
+export async function load({ cookies }: ServerLoadEvent) {
+  const sid = cookies.get("sid");
+  if (!sid) { return { feed: [] }};
+  const oauthSession = await atclient.restore(sid);
+  const agent = new Agent(oauthSession);
+  const authorFeed = await agent.getAuthorFeed({ actor: sid });
+  return { feed: JSON.stringify(authorFeed.data.feed) }
 }
 
 export const actions: Actions = {
