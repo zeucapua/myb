@@ -25,9 +25,9 @@ export class StateStore implements NodeSavedStateStore {
         state
       })
       .onConflictDoUpdate({ 
-        target: schema.AuthState.state,
-        set: { state }}
-      );
+        target: schema.AuthState.key,
+        set: { state }
+      });
   }
   async del(key: string) {
     await this.db.delete(schema.AuthState).where(eq(schema.AuthState.key, key));
@@ -48,7 +48,7 @@ export class SessionStore implements NodeSavedSessionStore {
     await this.db.insert(schema.AuthSession)
       .values({ key, session })
       .onConflictDoUpdate({
-        target: schema.AuthSession.session,
+        target: schema.AuthSession.key,
         set: { session }
       });
   }

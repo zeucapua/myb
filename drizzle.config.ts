@@ -9,8 +9,6 @@ export default defineConfig({
     authToken: process.env.DATABASE_AUTH_TOKEN
   },
 
-  verbose: true,
-  strict: true,
   driver: 'turso',
   dialect: 'sqlite'
 });
