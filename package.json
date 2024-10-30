@@ -4,7 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "drizzle-kit push & vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -29,6 +29,7 @@
 		"@atproto/api": "^0.13.12",
 		"@atproto/oauth-client-node": "^0.2.0",
 		"@libsql/client": "^0.9.0",
+		"@upstash/qstash": "^2.7.14",
 		"drizzle-orm": "^0.33.0"
 	}
 }
