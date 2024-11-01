@@ -35,5 +35,5 @@ export const actions: Actions = {
         createdAt: new Date().toISOString()
       });
     }
-  }
+  },
 };

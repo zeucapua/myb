@@ -1,10 +1,6 @@
-import { type ServerLoadEvent } from "@sveltejs/kit";
+import type { LayoutServerLoadEvent } from "./$types";
 
-export async function load({ locals }: ServerLoadEvent) {
-  const agent = locals.agent;
-  if (!agent) { return { profile: undefined }};
-
-  const profile = await agent.getProfile({ actor: agent.assertDid });
-
-  return { profile: profile.data }
+export async function load({ locals }: LayoutServerLoadEvent) {
+  const profile = locals.profile;
+  return { profile }
 }
