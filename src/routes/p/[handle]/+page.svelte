@@ -14,7 +14,7 @@
 </script>
 
 {#snippet postDisplay(data: FeedViewPost)}
-  <article class="flex flex-col gap-4 border">
+  <article class="flex flex-col gap-4 border px-4 py-2 rounded">
     <h1>{data.post.author.handle}</h1>
     <p>
     {

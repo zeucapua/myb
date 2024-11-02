@@ -1,7 +1,7 @@
 import { error, redirect, type Actions } from "@sveltejs/kit";
 import { isValidHandle } from "@atproto/syntax";
 import { atclient } from "$lib/server/client";
-import { RichText } from "@atproto/api";
+import { Agent, RichText } from "@atproto/api";
 
 export const actions: Actions = {
   "login": async ({ request }) => {
@@ -23,7 +23,7 @@ export const actions: Actions = {
     const formData = await request.formData();
     const content = formData.get("content") as string;
 
-    if (locals.agent) {
+    if (locals.agent instanceof Agent) {
       const rt = new RichText({
         text: content
       });

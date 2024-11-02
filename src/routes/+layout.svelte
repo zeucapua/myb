@@ -6,7 +6,7 @@
   const profile = data.profile as ProfileViewDetailed;
 </script>
 
-<div class="flex flex-col gap-8 w-screen h-screen p-8">
+<div class="flex flex-col gap-8 w-full h-full min-w-screen min-h-screen p-8 bg-slate-800 text-white">
   <nav class="flex gap-4 justify-between items-center">
     <a href="/" class="font-bold text-xl">myb 🦋</a>
     {#if profile}
@@ -16,7 +16,7 @@
       </form>
     {:else}
       <form action="?/login" method="POST"> 
-        <input type="text" name="handle" placeholder="zeu.dev" class="border rounded px-4 py-2" />
+        <input type="text" name="handle" placeholder="zeu.dev" class="border rounded px-4 py-2 bg-transparent" />
         <button type="submit" class="border rounded px-4 py-2">Login</button>
       </form>
     {/if}
