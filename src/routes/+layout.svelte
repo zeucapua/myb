@@ -1,6 +1,10 @@
 <script lang="ts">
   import '../app.css';
+  import { dev } from '$app/environment';
+  import { inject } from '@vercel/analytics';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
+
+  inject({ mode: dev ? 'development' : 'production' });
 
 	let { data, children } = $props();
   const profile = data.profile as ProfileViewDetailed;
