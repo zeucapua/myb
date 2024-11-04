@@ -4,7 +4,7 @@
   
   type Props = {
     data: {
-      result: ProfileViewDetailed;
+      profile: ProfileViewDetailed;
       feed: string
     }
   };
@@ -25,8 +25,8 @@
   </article>
 {/snippet}
 
-<img src={data.result.avatar} alt={`${data.result.handle} profile picture`} class="size-16" />
-<p>{data.result.handle}</p>
+<img src={data.profile.avatar} alt={`${data.profile.handle} profile picture`} class="size-16" />
+<p>{data.profile.handle}</p>
 
 {#each feed as post}
   {@render postDisplay(post)}

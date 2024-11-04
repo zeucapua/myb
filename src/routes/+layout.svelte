@@ -9,7 +9,7 @@
   inject({ mode: dev ? 'development' : 'production' });
 
 	let { data, children } = $props();
-  const profile = data.profile as ProfileViewDetailed;
+  const user = data.user as ProfileViewDetailed;
 
   function toastComingSoon() {
     toast("Coming soon", {
@@ -44,9 +44,9 @@
         <Icon icon="hugeicons:all-bookmark" class="size-8" />
       </button>
     </div>
-    {#if profile}
+    {#if user}
       <form action="/?/logout" method="POST" class="flex gap-4">
-        <img src={profile.avatar} alt={`${profile.handle} profile picture`} class="size-10 rounded" />
+        <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
         <button type="submit" class="border rounded px-4 py-2">Logout</button>
       </form>
     {:else}

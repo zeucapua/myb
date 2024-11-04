@@ -2,11 +2,11 @@
   import type { ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 
   let { data } = $props();
-  const profile = data.profile as ProfileViewDetailed | undefined;
+  const user = data.user as ProfileViewDetailed | undefined;
   let content = $state("");
 </script>
 
-{#if !profile}
+{#if !user}
   <h1 class="text-4xl font-bold">myb: power user's bluesky client</h1>
   <p>Login to start cool tools or start exploring!</p>
 
@@ -26,7 +26,7 @@
   </section>
 {/if}
 
-{#if profile}
+{#if user}
   <form action="?/createPost" method="POST" class="flex flex-col gap-4 p-8">
     <textarea 
       name="content" 

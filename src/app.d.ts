@@ -9,7 +9,7 @@ declare global {
 		// interface Error {}
 		interface Locals {
       agent: Agent | AtpBaseClient | undefined;
-      profile: ProfileViewDetailed
+      user: ProfileViewDetailed
     }
 		// interface PageData {}
 		// interface PageState {}

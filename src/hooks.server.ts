@@ -14,8 +14,8 @@ export const handle: Handle = async ({ event, resolve }) => {
     const oauthSession = await atclient.restore(decrypted);
     const agent = new Agent(oauthSession);
     event.locals.agent = agent;
-    const profile = await agent.getProfile({ actor: decrypted });
-    event.locals.profile = profile.data;
+    const user = await agent.getProfile({ actor: decrypted });
+    event.locals.user = user.data;
   }
   else {
     const agent = new AtpBaseClient({ service: "https://api.bsky.app" });

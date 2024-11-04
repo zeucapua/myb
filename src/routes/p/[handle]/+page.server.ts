@@ -1,33 +1,27 @@
 import { error } from "@sveltejs/kit";
+import { HandleResolver } from "@atproto/identity";
 import { Agent, AtpBaseClient } from "@atproto/api";
 import type { PageServerLoadEvent } from "./$types";
-import type { ProfileView } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 
 export async function load({ locals, params }: PageServerLoadEvent) {
   const agent = locals.agent;
   if (!agent) { error(500, { message: "Agent not found" }); }
 
-  if (agent instanceof Agent) {
-    const results = await agent.searchActors({ q: params.handle });
-    if (results.data.actors.length !== 1) {
-      error(500, { message: "Handle not specific" });
-    }
+  const handleResolver = new HandleResolver({});
+  const did = await handleResolver.resolve(params.handle);
 
-    const actor = results.data.actors[0] as ProfileView;
-    const profile = await agent.getProfile({ actor: actor.did });
-    const feed = await agent.getAuthorFeed({ actor: actor.did });
-    return { result: profile.data, feed: JSON.stringify(feed.data.feed) };
+  if (!did) { error(500, "Handle not resolved to DID"); }
+
+  if (agent instanceof Agent) {
+    const profile = await agent.getProfile({ actor: did });
+    const feed = await agent.getAuthorFeed({ actor: did });
+
+    return { profile: profile.data, feed: JSON.stringify(feed.data.feed) } 
   }
   else if (agent instanceof AtpBaseClient) {
-    const results = await agent.app.bsky.actor.searchActors({ q: params.handle });
+    const profile = await agent.app.bsky.actor.getProfile({ actor: did });
+    const feed = await agent.app.bsky.feed.getAuthorFeed({ actor: did });
 
-    if (results.data.actors.length !== 1) {
-      error(500, { message: "Handle not specific" });
-    }
-
-    const actor = results.data.actors[0] as ProfileView;
-    const profile = await agent.app.bsky.actor.getProfile({ actor: actor.did });
-    const feed = await agent.app.bsky.feed.getAuthorFeed({ actor: actor.did });
-    return { result: profile.data, feed: JSON.stringify(feed.data.feed) };
+    return { profile: profile.data, feed: JSON.stringify(feed.data.feed) } 
   }
 }
