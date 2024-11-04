@@ -6,6 +6,10 @@ Made in SvelteKit. Using `@atproto/api` and `@atproto/oauth-client-node`.
 - [x] Login/Logout via OAuth
 - [x] Search users
 - [x] Profile pages
+  - [x] Render posts' facets
+  - [x] Toggle reposts
+  - [ ] Post pagination 
+- [ ] Draft posts
 - [ ] Reading 'Following' + Any Feed posts
 - [ ] Bookmark posts
 - [ ] CRON-based scheduled posting

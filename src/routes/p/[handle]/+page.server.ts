@@ -3,6 +3,7 @@ import { error } from "@sveltejs/kit";
 import { HandleResolver } from "@atproto/identity";
 import { Agent, AtpBaseClient, RichText } from "@atproto/api";
 import type { PageServerLoadEvent } from "./$types";
+import { dev } from "$app/environment";
 
 export async function load({ locals, params }: PageServerLoadEvent) {
   const agent = locals.agent;
@@ -39,7 +40,8 @@ async function renderTextToMarkdownToHTML(text: string, agent: Agent | AtpBaseCl
   for (const segment of rt.segments()) {
     if (segment.isLink()) {
       markdown += `[${segment.text}](${segment.link?.uri})`
-    } else if (segment.isMention()) {
+    } 
+    else if (segment.isMention()) {
       let profile;
       if (agent instanceof Agent) {
         profile = await agent.getProfile({ actor: segment.mention?.did || "" });
@@ -47,8 +49,9 @@ async function renderTextToMarkdownToHTML(text: string, agent: Agent | AtpBaseCl
       else {
         profile = await agent.app.bsky.actor.getProfile({ actor: segment.mention?.did || "" });
       }
-      markdown += `[${segment.text}](https://myb.zeu.dev/p/${profile.data.handle})`
-    } else {
+      markdown += `[${segment.text}](${dev ? "http://localhost:5173" : "https://myb.zeu.dev" }/p/${profile.data.handle})`
+    } 
+    else {
       markdown += segment.text
     }
   }

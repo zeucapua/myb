@@ -5,6 +5,7 @@
   import { inject } from '@vercel/analytics';
   import toast, { Toaster } from 'svelte-french-toast';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
+    import { goto } from '$app/navigation';
 
   inject({ mode: dev ? 'development' : 'production' });
 
@@ -14,6 +15,12 @@
   function toastComingSoon() {
     toast("Coming soon", {
       icon: "🙊" 
+    });
+  }
+
+  function toastError(text: string) {
+    toast(text, {
+      icon: "🚨" 
     });
   }
 </script>
@@ -37,7 +44,7 @@
 
   <menu class="fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-4 py-2 border-t justify-between">
     <div class="flex gap-4">
-      <button onclick={toastComingSoon}>
+      <button onclick={() => { !user ? toastError("Must be logged in to post") : goto("/") }}>
         <Icon icon="hugeicons:quill-write-02" class="size-8" />
       </button>
       <button onclick={toastComingSoon}>
@@ -46,7 +53,9 @@
     </div>
     {#if user}
       <form action="/?/logout" method="POST" class="flex gap-4">
-        <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
+        <a href={`/p/${user.handle}`}>
+          <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
+        </a>
         <button type="submit" class="border rounded px-4 py-2">Logout</button>
       </form>
     {:else}

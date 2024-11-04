@@ -17,9 +17,16 @@
 </script>
 
 {#snippet postDisplay(data: FeedViewPost)}
-  <article class={`flex flex-col gap-4 border px-4 py-2 rounded ${data.reason && "border-dashed"}`}>
+  <article class={`flex flex-col gap-4 border p-4 rounded ${data.reason && "border-dashed"}`} data-sveltekit-reload>
     <div class="flex items-center justify-between w-full">
-      <h1>{data.post.author.handle} </h1>
+      <a href={`/p/${data.post.author.handle}`} class="hover:underline flex gap-2 items-center">
+        <img 
+          src={data.post.author.avatar} 
+          alt={`${data.post.author.handle} profile picture`} 
+          class="size-6 rounded"
+        />
+        @{data.post.author.handle} 
+      </a>
       <div class="flex gap-2">
         {#if data.reason}
           <Icon icon="bx:repost" />
