@@ -15,6 +15,13 @@
       "when": 1730165504979,
       "tag": "0001_smiling_kingpin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1730758990513,
+      "tag": "0002_skinny_human_robot",
+      "breakpoints": true
     }
   ]
 }

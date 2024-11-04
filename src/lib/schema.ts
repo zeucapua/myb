@@ -10,6 +10,12 @@ export const AuthState = sqliteTable('auth_state', {
   state: text("state", { mode: "json" }).notNull()
 });
 
+export const DraftPost = sqliteTable("draft_post", {
+  id: text("id", { mode: "text" }).primaryKey().unique(),
+  content: text("content", { mode: "text" }).notNull(),
+  authorDid: text("author_did", { mode: "text" }).notNull(),
+});
+
 export const Bookmark = sqliteTable("bookmark", {
   id: text("id", { mode: "text" }).primaryKey().unique(),
   uri: text("uri", { mode: "text" }),

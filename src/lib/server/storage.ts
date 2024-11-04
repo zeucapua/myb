@@ -6,7 +6,7 @@ import type {
 } from '@atproto/oauth-client-node'
 import { eq } from 'drizzle-orm';
 import { db as database } from './db'
-import * as schema from "./db/schema";
+import * as schema from "$lib/schema";
 
 export class StateStore implements NodeSavedStateStore {
   constructor(private db: typeof database) {}
