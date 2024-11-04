@@ -18,6 +18,11 @@ export async function load({ locals, params }: PageServerLoadEvent) {
     const profile = await agent.getProfile({ actor: did });
     const feed = await agent.getAuthorFeed({ actor: did });
 
+    for (const post of feed.data.feed) {
+      // @ts-ignore
+      post.html = await renderTextToMarkdownToHTML(post.post.record.text, agent);
+    }
+
     return { profile: profile.data, feed: JSON.stringify(feed.data.feed) } 
   }
   else if (agent instanceof AtpBaseClient) {
