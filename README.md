@@ -9,7 +9,7 @@ Made in SvelteKit. Using `@atproto/api` and `@atproto/oauth-client-node`.
   - [x] Render posts' facets
   - [x] Toggle reposts
   - [ ] Post pagination 
-- [ ] Draft posts
+- [x] Draft posts
 - [ ] Reading 'Following' + Any Feed posts
 - [ ] Bookmark posts
 - [ ] CRON-based scheduled posting
