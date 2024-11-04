@@ -14,6 +14,7 @@
   const feed = JSON.parse(data.feed) as FeedViewPost & { html: string }[];
 
   let showReposts = $state(true);
+  let showReplies = $state(true);
 </script>
 
 {#snippet postDisplay(data: FeedViewPost)}
@@ -62,12 +63,16 @@
     <input type="checkbox" bind:checked={showReposts} />
     Reposts
   </label>
+  <label class="flex gap-2">
+    <input type="checkbox" bind:checked={showReplies} />
+    Replies
+  </label>
 </menu>
 
 
 <ol class="flex flex-col gap-4">
   {#each feed as post}
-    {#if !(post.reason && !showReposts)}
+    {#if !(post.reason && !showReposts) && !(post.reply && !showReplies)}
       <li>{@render postDisplay(post)}</li>
     {/if}
   {/each}

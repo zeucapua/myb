@@ -2,10 +2,10 @@
   import '../app.css';
   import Icon from "@iconify/svelte";
   import { dev } from '$app/environment';
+    import { goto } from '$app/navigation';
   import { inject } from '@vercel/analytics';
   import toast, { Toaster } from 'svelte-french-toast';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
-    import { goto } from '$app/navigation';
 
   inject({ mode: dev ? 'development' : 'production' });
 
@@ -24,6 +24,15 @@
     });
   }
 </script>
+
+<svelte:head>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="easytodo.link">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="viewport-fit=cover, user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+</svelte:head>
 
 <div class="relative w-full h-full min-w-screen min-h-screen bg-slate-800 text-white">
   <Toaster />
