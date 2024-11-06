@@ -44,7 +44,6 @@
       </a>
       <div class="flex gap-4 items-center">
         <a href="/search" class="underline underline-offset-4">Search</a>
-        <a href="/feeds" class="underline underline-offset-4">Feeds</a>
       </div>
     </nav>
 
@@ -53,7 +52,7 @@
 
   <menu class="fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-4 py-2 border-t justify-between">
     <div class="flex gap-4">
-      <button onclick={() => { !user ? toastError("Must be logged in to post") : goto("/") }}>
+      <button onclick={() => { !user ? toastError("Must be logged in to post") : goto("/console") }}>
         <Icon icon="hugeicons:quill-write-02" class="size-8" />
       </button>
       <button onclick={toastComingSoon}>
@@ -62,7 +61,7 @@
     </div>
     {#if user}
       <form action="/?/logout" method="POST" class="flex gap-4">
-        <a href={`/p/${user.handle}`}>
+        <a href={`/p/${user.handle}`} data-sveltekit-reload>
           <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
         </a>
         <button type="submit" class="border rounded px-4 py-2">Logout</button>

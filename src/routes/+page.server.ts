@@ -1,21 +1,37 @@
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
 import { isValidHandle } from "@atproto/syntax";
 import { atclient } from "$lib/server/client";
-import { Agent, RichText } from "@atproto/api";
+import { Agent, AtpBaseClient, RichText } from "@atproto/api";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/schema";
 import type { PageServerLoadEvent } from "./$types";
 import { eq } from "drizzle-orm";
+import { renderTextToMarkdownToHTML } from "$lib/utils";
 
 export async function load({ locals }: PageServerLoadEvent) {
-  const user = locals.user;
-  if (!user) { return { drafts: [] }}
+  if (locals.agent instanceof Agent) {
+    const { data } = await locals.agent.getTimeline();
 
-  const drafts = await db.query.DraftPost.findMany({
-    where: eq(schema.DraftPost.authorDid, user.did)
-  });
+    for (const post of data.feed) {
+      // @ts-ignore
+      post.html = await renderTextToMarkdownToHTML(post.post.record.text, locals.agent);
+    }
 
-  return { drafts };
+    return { feed: JSON.stringify(data.feed) };
+  }
+  else if (locals.agent instanceof AtpBaseClient) {
+    const { data } = await locals.agent.app.bsky.feed.getFeed({
+      // "Discover" feed
+      feed: "at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot"
+    });
+
+    for (const post of data.feed) {
+      // @ts-ignore
+      post.html = await renderTextToMarkdownToHTML(post.post.record.text, locals.agent);
+    }
+
+    return { feed: JSON.stringify(data.feed) };
+  }
 }
 
 export const actions: Actions = {
@@ -65,6 +81,10 @@ export const actions: Actions = {
           id: crypto.randomUUID(),
           authorDid: locals.user.did,
           content
+        })
+        .onConflictDoUpdate({
+          target: schema.DraftPost.id,
+          set: { content }
         });
     }
     catch (e) {
