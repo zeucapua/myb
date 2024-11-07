@@ -2,14 +2,16 @@
   import '../app.css';
   import posthog from 'posthog-js';
   import Icon from "@iconify/svelte";
-  import { goto } from '$app/navigation';
   import toast, { Toaster } from 'svelte-french-toast';
+  import IconDrawer from '$lib/components/IconDrawer.svelte';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
+    import Page from './+page.svelte';
 
 	let { data, children } = $props();
   const user = data.user as ProfileViewDetailed;
 
   let handleInput = $state("");
+  let contentInput = $state("");
 
   function toastComingSoon() {
     toast("Coming soon", {
@@ -96,8 +98,8 @@
     {@render children()}
   </main>
 
-  <menu class="fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-end">
-    <div class="flex gap-4">
+  <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-end">
+    <div class="flex gap-4 items-center">
       <a 
         href="/search"
         onclick={() => {
@@ -112,14 +114,43 @@
       }}>
         <Icon icon="hugeicons:all-bookmark" class="size-8" />
       </button>
-      <button onclick={() => { 
-        posthog.capture("clicked: bottom menu", { button: "Create Post" });
-        if (!user) { toastError("Must be logged in to post"); } 
-        else { goto("/console"); }
-      }}>
-        <Icon icon="hugeicons:quill-write-02" class="size-8" />
-      </button>
+      <IconDrawer
+        trigger={PostDrawerTrigger}
+        content={PostDrawerContent}
+      />
     </div>
   </menu>
 </div>
 
+{#snippet PostDrawerTrigger()}
+  <button onclick={() => { 
+    posthog.capture("clicked: bottom menu", { button: "Create Post" });
+    if (!user) { toastError("Must be logged in to post"); } 
+  }}>
+    <Icon icon="hugeicons:quill-write-02" class="size-8" />
+  </button>
+{/snippet}
+
+{#snippet PostDrawerContent()}
+  <form action="/?/createPost" method="POST" class="flex flex-col gap-4">
+    <textarea 
+      name="content" 
+      bind:value={contentInput} 
+      placeholder="Say something" 
+      class="bg-transparent border rounded px-4 py-2"
+      style="field-sizing: content;"
+      maxlength={300}
+    >
+    </textarea>
+    <div class="self-end flex gap-2">
+      <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
+        Save Draft
+      </button>
+      <button type="submit" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
+        Post
+      </button>
+    </div>
+  </form>
+
+  <a href="/console" class="underline">Drafts</a>
+{/snippet}
