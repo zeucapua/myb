@@ -30,11 +30,28 @@
         {#if data.reason}
           <Icon icon="bx:repost" />
         {/if}
-        {#if data.reply}
-          <Icon icon="ic:baseline-reply" />
-        {/if}
       </div>
     </div>
+      
+    {#if data.reply}
+      <div class="flex gap-2 items-center text-sm font-light">
+        <Icon icon="ic:baseline-reply" />
+        <a 
+          href={`/p/${
+            // @ts-ignore
+            data.reply.parent.author?.handle ?? "/"
+          }`}
+        >
+          <p class="hover:underline">Reply to
+          {
+            // @ts-ignore 
+            data.reply.parent.author?.handle ?? "unknown"
+          }
+          </p>
+        </a>
+      </div>
+    {/if}
+
     <p class="prose prose-invert">
       {@html 
         // @ts-ignore
@@ -42,11 +59,26 @@
       }
     </p>
 
-    <menu class="flex justify-end">
-      <button class="flex gap-1">
-        <Icon icon="prime:heart" class="size-6" />
-        {data.post.likeCount}
-      </button>
+    <menu class="flex justify-between">
+      <div class="flex gap-2">
+        <button class="flex gap-1">
+          <Icon icon="ph:wrench" class="size-6" />
+        </button>
+      </div>
+      <div class="grid grid-cols-3 gap-2">
+        <button class="flex gap-1">
+          <Icon icon="iconamoon:comment" class="size-6" />
+          {data.post.replyCount}
+        </button>
+        <button class="flex gap-1">
+          <Icon icon="bx:repost" class="size-6" />
+          {data.post.quoteCount}
+        </button>
+        <button class="flex gap-1">
+          <Icon icon="prime:heart" class="size-6" />
+          {data.post.likeCount}
+        </button>
+      </div>
     </menu>
   </article>
 {/snippet}

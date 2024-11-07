@@ -33,7 +33,7 @@
   <meta name="viewport" content="viewport-fit=cover, user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 </svelte:head>
 
-<div class="relative w-full h-full min-w-screen min-h-screen bg-slate-800 text-white">
+<div class="relative w-full h-full min-w-screen min-h-screen bg-slate-800 text-white pt-4 pb-8">
   <Toaster />
   <main class="flex flex-col gap-4 p-6 pb-16">
     <nav class="flex gap-4 justify-between items-center">
@@ -48,23 +48,70 @@
         myb
       </a>
       <div class="flex gap-4 items-center">
-        <a 
-          href="/search" 
-          onclick={() => {
-            posthog.capture("clicked: top nav", { button: "Search link" });
-          }}
-          class="underline underline-offset-4"
-        >
-          Search
-        </a>
+        {#if user}
+          <form action="/?/logout" method="POST" class="flex gap-4">
+            <a 
+              href={`/p/${user.handle}`} 
+              onclick={() => {
+                posthog.capture("clicked: top nav", { button: "User profile" });
+              }}
+              data-sveltekit-reload
+            >
+              <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
+            </a>
+            <button 
+              type="submit" 
+              onclick={() => {
+                posthog.capture("clicked: top nav", { button: "Logout" });
+              }}
+              class="border rounded px-4 py-2"
+            >
+              Logout
+            </button>
+          </form>
+        {:else}
+          <form action="/?/login" method="POST" class="flex gap-2"> 
+            <input 
+              type="text" 
+              name="handle" 
+              placeholder="zeu.dev" 
+              bind:value={handleInput}
+              class="border rounded px-4 py-2 bg-transparent max-w-32" 
+            />
+            <button 
+              type="submit" 
+              onclick={() => {
+                posthog.capture("clicked: top nav", { button: "Login" });
+              }}
+              disabled={!handleInput}
+              class="border rounded px-4 py-2"
+            >
+              Login
+            </button>
+          </form>
+        {/if}
       </div>
     </nav>
 
     {@render children()}
   </main>
 
-  <menu class="fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-4 py-2 border-t justify-between">
+  <menu class="fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-end">
     <div class="flex gap-4">
+      <a 
+        href="/search"
+        onclick={() => {
+          posthog.capture("clicked: bottom menu", { button: "Search" });
+        }}
+      >
+        <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
+      </a>
+      <button onclick={() => {
+        posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
+        toastComingSoon();
+      }}>
+        <Icon icon="hugeicons:all-bookmark" class="size-8" />
+      </button>
       <button onclick={() => { 
         posthog.capture("clicked: bottom menu", { button: "Create Post" });
         if (!user) { toastError("Must be logged in to post"); } 
@@ -72,55 +119,7 @@
       }}>
         <Icon icon="hugeicons:quill-write-02" class="size-8" />
       </button>
-      <button onclick={() => {
-        posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
-        toastComingSoon();
-      }}>
-        <Icon icon="hugeicons:all-bookmark" class="size-8" />
-      </button>
     </div>
-    {#if user}
-      <form action="/?/logout" method="POST" class="flex gap-4">
-        <a 
-          href={`/p/${user.handle}`} 
-          onclick={() => {
-            posthog.capture("clicked: bottom menu", { button: "User profile" });
-          }}
-          data-sveltekit-reload
-        >
-          <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
-        </a>
-        <button 
-          type="submit" 
-          onclick={() => {
-            posthog.capture("clicked: bottom menu", { button: "Logout" });
-          }}
-          class="border rounded px-4 py-2"
-        >
-          Logout
-        </button>
-      </form>
-    {:else}
-      <form action="/?/login" method="POST" class="flex gap-2"> 
-        <input 
-          type="text" 
-          name="handle" 
-          placeholder="zeu.dev" 
-          bind:value={handleInput}
-          class="border rounded px-4 py-2 bg-transparent max-w-32" 
-        />
-        <button 
-          type="submit" 
-          onclick={() => {
-            posthog.capture("clicked: bottom menu", { button: "Login" });
-          }}
-          disabled={!handleInput}
-          class="border rounded px-4 py-2"
-        >
-          Login
-        </button>
-      </form>
-    {/if}
   </menu>
 </div>
 
