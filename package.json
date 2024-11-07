@@ -36,6 +36,7 @@
 		"@upstash/qstash": "^2.7.14",
 		"drizzle-orm": "^0.33.0",
 		"marked": "^14.1.3",
+		"posthog-js": "^1.181.0",
 		"svelte-french-toast": "^1.2.0"
 	}
 }
