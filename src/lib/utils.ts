@@ -1,6 +1,7 @@
-import { dev } from "$app/environment";
-import { Agent, RichText, type AtpBaseClient } from "@atproto/api";
 import { marked } from "marked";
+import toast from "svelte-french-toast";
+import { Agent, RichText, type AtpBaseClient } from "@atproto/api";
+import { dev } from "$app/environment";
 
 export async function renderTextToMarkdownToHTML(text: string, agent: Agent | AtpBaseClient) {
   const rt = new RichText({ text });
@@ -27,4 +28,16 @@ export async function renderTextToMarkdownToHTML(text: string, agent: Agent | At
 
   const html = await marked.parse(markdown);
   return html;
+}
+
+export function toastComingSoon() {
+  toast("Coming soon", {
+    icon: "🙊" 
+  });
+}
+
+export function toastError(text: string) {
+  toast(text, {
+    icon: "🚨" 
+  });
 }

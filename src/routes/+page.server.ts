@@ -101,5 +101,20 @@ export const actions: Actions = {
     catch (e) {
       return fail(500);
     }
+  },
+  "likePost": async ({ request, locals }) => {
+    const formData = await request.formData();
+    const cid = formData.get("post_cid") as string;
+    const uri = formData.get("post_uri") as string;
+
+    const agent = locals.agent;
+    if (agent instanceof AtpBaseClient) {
+      return { success: false }
+    }
+
+    if (agent instanceof Agent) {
+      const { uri: resUri } = await agent.like(uri, cid);
+      return { success: true }
+    }
   }
 };

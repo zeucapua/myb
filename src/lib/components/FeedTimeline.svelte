@@ -1,22 +1,31 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
+  import { enhance } from '$app/forms';
+  import { toastComingSoon, toastError } from "$lib/utils";
+
+  import type { ActionData } from '../../routes/$types';
   import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
 
   type Props = {
+    form: ActionData | undefined;
     stringifiedFeed: string;
   }
 
   type FeedPost = FeedViewPost & { html: string };
   
-  let { stringifiedFeed }: Props = $props();
+  let { form, stringifiedFeed }: Props = $props();
   let feed = JSON.parse(stringifiedFeed) as FeedPost[];
 
   let showReposts = $state(true);
   let showReplies = $state(true);
+
+  if (form && !form.success) { 
+    toastError("Action failed"); 
+  }
 </script>
 
 {#snippet postDisplay(data: FeedViewPost)}
-  <article class={`flex flex-col gap-4 border p-4 rounded ${data.reason && "border-dashed"}`} data-sveltekit-reload>
+  <article class={`flex flex-col gap-4 border p-4 ${data.reason && "border-dashed"}`} data-sveltekit-reload>
     <div class="flex items-center justify-between w-full">
       <a href={`/p/${data.post.author.handle}`} class="hover:underline flex gap-2 items-center">
         <img 
@@ -52,33 +61,33 @@
       </div>
     {/if}
 
-    <p class="prose prose-invert">
+    <p class="prose prose-invert prose-p:text-white prose-sm prose-pink">
       {@html 
         // @ts-ignore
         data.html 
       }
     </p>
 
-    <menu class="flex justify-between">
-      <div class="flex gap-2">
-        <button class="flex gap-1">
-          <Icon icon="ph:wrench" class="size-6" />
-        </button>
-      </div>
-      <div class="grid grid-cols-3 gap-2">
-        <button class="flex gap-1">
-          <Icon icon="iconamoon:comment" class="size-6" />
-          {data.post.replyCount}
-        </button>
-        <button class="flex gap-1">
-          <Icon icon="bx:repost" class="size-6" />
-          {data.post.quoteCount}
-        </button>
-        <button class="flex gap-1">
+    <menu class="grid grid-cols-4 justify-items-end">
+      <button onclick={toastComingSoon} class="flex gap-1 justify-self-start">
+        <Icon icon="ph:wrench" class="size-6" />
+      </button>
+      <button onclick={toastComingSoon} class="flex gap-1">
+        <Icon icon="iconamoon:comment" class="size-6" />
+        {data.post.replyCount}
+      </button>
+      <button onclick={toastComingSoon} class="flex gap-1">
+        <Icon icon="bx:repost" class="size-6" />
+        {data.post.quoteCount}
+      </button>
+      <form use:enhance action="/?/likePost" method="POST">
+        <input name="post_uri" type="hidden" value={data.post.uri} />
+        <input name="post_cid" type="hidden" value={data.post.cid} />
+        <button type="submit" class="flex gap-1">
           <Icon icon="prime:heart" class="size-6" />
           {data.post.likeCount}
         </button>
-      </div>
+      </form>
     </menu>
   </article>
 {/snippet}
@@ -95,7 +104,7 @@
 </menu>
 
 
-<ol class="flex flex-col gap-4">
+<ol class="flex flex-col">
   {#each feed as post}
     {#if !(post.reason && !showReposts) && !(post.reply && !showReplies)}
       <li>{@render postDisplay(post)}</li>

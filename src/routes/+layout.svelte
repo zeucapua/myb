@@ -2,28 +2,16 @@
   import '../app.css';
   import posthog from 'posthog-js';
   import Icon from "@iconify/svelte";
-  import toast, { Toaster } from 'svelte-french-toast';
+  import { Toaster } from 'svelte-french-toast';
+  import { toastComingSoon, toastError } from "$lib/utils";
   import IconDrawer from '$lib/components/IconDrawer.svelte';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
-    import Page from './+page.svelte';
 
 	let { data, children } = $props();
   const user = data.user as ProfileViewDetailed;
 
   let handleInput = $state("");
   let contentInput = $state("");
-
-  function toastComingSoon() {
-    toast("Coming soon", {
-      icon: "🙊" 
-    });
-  }
-
-  function toastError(text: string) {
-    toast(text, {
-      icon: "🚨" 
-    });
-  }
 </script>
 
 <svelte:head>
@@ -35,7 +23,7 @@
   <meta name="viewport" content="viewport-fit=cover, user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 </svelte:head>
 
-<div class="relative w-full h-full min-w-screen min-h-screen bg-slate-800 text-white pt-4 pb-8">
+<div class="font-switzer relative w-full h-full min-w-screen min-h-screen bg-slate-800 text-white pt-4 pb-8">
   <Toaster />
   <main class="flex flex-col gap-4 p-6 pb-16">
     <nav class="flex gap-4 justify-between items-center">

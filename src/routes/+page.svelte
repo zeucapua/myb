@@ -1,7 +1,7 @@
 <script lang="ts">
   import FeedTimeline from "$lib/components/FeedTimeline.svelte";
 
-  let { data } = $props();
+  let { data, form } = $props();
 </script>
 
-<FeedTimeline stringifiedFeed={data.feed as string} />
+<FeedTimeline {form} stringifiedFeed={data.feed as string} />

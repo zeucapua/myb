@@ -1,15 +1,18 @@
 <script lang="ts">
   import FeedTimeline from "$lib/components/FeedTimeline.svelte";
+
+  import type { ActionData } from "./$types";
   import type { ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 
   type Props = {
     data: {
       profile: ProfileViewDetailed;
       feed: string
-    }
+    },
+    form: ActionData | undefined;
   };
 
-  let { data }: Props = $props();
+  let { data, form }: Props = $props();
 </script>
 
 <section class="flex gap-4 items-center">
@@ -24,4 +27,4 @@
   </div>
 </section>
 
-<FeedTimeline stringifiedFeed={data.feed} />
+<FeedTimeline {form} stringifiedFeed={data.feed} />

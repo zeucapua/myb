@@ -1,3 +1,8 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
-@import "tailwindcss/utilities"
+@import "tailwindcss/utilities";
+
+@font-face {
+  font-family: Switzer;
+  src: url("/Switzer-Variable.woff2");
+}
