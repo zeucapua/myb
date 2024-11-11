@@ -2,6 +2,7 @@
   import '../app.css';
   import posthog from 'posthog-js';
   import Icon from "@iconify/svelte";
+  import { setContext, type Snippet } from 'svelte';
   import { Toaster } from 'svelte-french-toast';
   import { toastComingSoon, toastError } from "$lib/utils";
   import IconDrawer from '$lib/components/IconDrawer.svelte';
@@ -10,13 +11,18 @@
 	let { data, children } = $props();
   const user = data.user as ProfileViewDetailed;
 
+  // for individual pages/layouts to implement in context controls
+  let bottomControls = $state<Snippet>();
+  let setBottomControls = (snippet: Snippet) => bottomControls = snippet;
+  setContext("setBottomControls", setBottomControls);
+
   let handleInput = $state("");
   let contentInput = $state("");
 </script>
 
 <svelte:head>
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="easytodo.link">
+  <meta name="apple-mobile-web-app-title" content="myb.zeu.dev">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -86,7 +92,8 @@
     {@render children()}
   </main>
 
-  <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-end">
+  <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-between">
+    {@render bottomControls?.()}
     <div class="flex gap-4 items-center">
       <a 
         href="/search"
@@ -102,10 +109,14 @@
       }}>
         <Icon icon="hugeicons:all-bookmark" class="size-8" />
       </button>
-      <IconDrawer
-        trigger={PostDrawerTrigger}
-        content={PostDrawerContent}
-      />
+      {#if !user}
+        {@render PostDrawerTrigger()}
+      {:else}
+        <IconDrawer
+          trigger={PostDrawerTrigger}
+          content={PostDrawerContent}
+        />
+      {/if}
     </div>
   </menu>
 </div>

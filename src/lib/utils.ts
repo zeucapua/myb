@@ -36,6 +36,12 @@ export function toastComingSoon() {
   });
 }
 
+export function toastSuccess(text: string) {
+  toast(text, {
+    icon: "🥳" 
+  });
+}
+
 export function toastError(text: string) {
   toast(text, {
     icon: "🚨" 

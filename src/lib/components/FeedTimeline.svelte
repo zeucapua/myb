@@ -5,6 +5,7 @@
 
   import type { ActionData } from '../../routes/$types';
   import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
+    import { getContext, type Snippet } from 'svelte';
 
   type Props = {
     form: ActionData | undefined;
@@ -19,6 +20,9 @@
   let showReposts = $state(true);
   let showReplies = $state(true);
 
+  let setBottomControls = getContext("setBottomControls") as (snippet: Snippet) => void;
+  setBottomControls(postToggles);
+
   if (form && !form.success) { 
     toastError("Action failed"); 
   }
@@ -27,13 +31,16 @@
 {#snippet postDisplay(data: FeedViewPost)}
   <article class={`flex flex-col gap-4 border p-4 ${data.reason && "border-dashed"}`} data-sveltekit-reload>
     <div class="flex items-center justify-between w-full">
-      <a href={`/p/${data.post.author.handle}`} class="hover:underline flex gap-2 items-center">
+      <a href={`/p/${data.post.author.handle}`} class="text-sm hover:underline flex gap-2 items-start">
         <img 
           src={data.post.author.avatar} 
           alt={`${data.post.author.handle} profile picture`} 
-          class="size-6 rounded"
+          class="size-8 rounded"
         />
-        @{data.post.author.handle} 
+        <div class="flex flex-col">
+          <p>{data.post.author.displayName}</p>
+          <p>@{data.post.author.handle}</p>
+        </div>
       </a>
       <div class="flex gap-2">
         {#if data.reason}
@@ -92,16 +99,18 @@
   </article>
 {/snippet}
 
-<menu class="flex gap-4">
-  <label class="flex gap-2">
-    <input type="checkbox" bind:checked={showReposts} />
-    Reposts
-  </label>
-  <label class="flex gap-2">
-    <input type="checkbox" bind:checked={showReplies} />
-    Replies
-  </label>
-</menu>
+{#snippet postToggles()}
+  <menu class="flex gap-4 items-center">
+    <label class="flex gap-2">
+      <input type="checkbox" bind:checked={showReposts} />
+      Reposts
+    </label>
+    <label class="flex gap-2">
+      <input type="checkbox" bind:checked={showReplies} />
+      Replies
+    </label>
+  </menu>
+{/snippet}
 
 
 <ol class="flex flex-col">
