@@ -7,8 +7,11 @@ Made in SvelteKit. Using `@atproto/api` and `@atproto/oauth-client-node`.
 - [x] Search users
 - [x] Profile pages
   - [x] Render posts' facets
-  - [x] Toggle reposts
-  - [ ] Post pagination 
+  - [x] Toggle reposts/replies
+  - [ ] Post pagination
+  - [x] Show Description
+  - [x] Copy DID/Handle
+  - [x] Open handle domain site
 - [x] Draft posts
 - [ ] Reading 'Following' + Any Feed posts
 - [ ] Bookmark posts
