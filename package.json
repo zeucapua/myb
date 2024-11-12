@@ -19,6 +19,7 @@
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@tailwindcss/typography": "^0.5.15",
 		"autoprefixer": "^10.4.20",
+		"date-fns": "^4.1.0",
 		"drizzle-kit": "^0.22.0",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
