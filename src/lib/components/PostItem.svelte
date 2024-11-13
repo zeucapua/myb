@@ -1,27 +1,29 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import posthog from "posthog-js";
   import { enhance } from "$app/forms";
-  import { toastComingSoon } from "$lib/utils";
+  import { toastComingSoon, toastSuccess } from "$lib/utils";
   import { formatDistanceToNowStrict } from "date-fns";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-    import { type ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
+  import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
+  import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
+  import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 
   let { data }: { data: FeedViewPost } = $props();
-  console.log(data.post.embed?.record);
 </script>
 
-{#snippet quotedPost(record: ViewRecord)}
+{#snippet quotedPost(record: ViewRecord | GeneratorView)}
   <article class="flex flex-col gap-2 border px-4 py-2 rounded">
-    <a href={`/p/${record.author.handle}`} class="text-sm hover:underline flex gap-2 items-start">
+    <a href={`/p/${(record.author as ProfileViewBasic).handle ?? (record.creator as ProfileView).handle}`} class="text-sm hover:underline flex gap-2 items-start">
       <img 
-        src={record.author.avatar} 
-        alt={`${record.author.handle} profile picture`} 
+        src={(record.author as ProfileViewBasic).avatar ?? (record.creator as ProfileView).avatar} 
+        alt={`${(record.author as ProfileViewBasic).handle ?? (record.creator as ProfileView).handle} profile picture`} 
         class="size-8 rounded"
       />
       <div class="flex flex-col">
         <p class="flex gap-1 items-center">
-          {record.author.displayName} 
-          <span class="text-xs">@{record.author.handle}</span>
+          {(record.author as ProfileViewBasic).displayName ?? (record.creator as ProfileView).displayName} 
+          <span class="text-xs">@{(record.author as ProfileViewBasic).handle ?? (record.creator as ProfileView).handle}</span>
         </p>
         <time class="text-xs font-light">
           {formatDistanceToNowStrict(new Date(record.indexedAt))} ago
@@ -99,6 +101,22 @@
       <img src={data.post.embed.external!.uri} alt={data.post.embed.external!.description} />
     {:else if data.post.embed.$type === "app.bsky.embed.record#view"}
       {@render quotedPost(data.post.embed.record as ViewRecord)}
+    {:else}
+      <div class="flex gap-2 justify-between text-xs border px-4 py-2 rounded items-center">
+        <div class="flex gap-2 items-center">
+          <Icon icon="bx:error-alt" />
+          <p>This post has an unsupported embed</p>
+        </div>
+        <button 
+          onclick={() => {
+            posthog.capture("reported unsupported embed", { type: data.post.embed!.$type });
+            toastSuccess("Unsupported embed reported!");
+          }}
+          class="self-end px-2 py-1 border rounded"
+        >
+            Report
+        </button>
+      </div>
     {/if}
   {/if}
 
