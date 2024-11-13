@@ -2,10 +2,12 @@
   import '../app.css';
   import posthog from 'posthog-js';
   import Icon from "@iconify/svelte";
-  import { setContext, type Snippet } from 'svelte';
+  import { browser } from '$app/environment';
   import { Toaster } from 'svelte-french-toast';
+  import { setContext, type Snippet } from 'svelte';
   import { toastComingSoon, toastError } from "$lib/utils";
   import IconDrawer from '$lib/components/IconDrawer.svelte';
+  import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
 
 	let { data, children } = $props();
@@ -15,6 +17,14 @@
   let bottomControls = $state<Snippet>();
   let setBottomControls = (snippet: Snippet) => bottomControls = snippet;
   setContext("setBottomControls", setBottomControls);
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        enabled: browser
+      }
+    }
+  });
 
   let handleInput = $state("");
   let contentInput = $state("");
@@ -29,127 +39,128 @@
   <meta name="viewport" content="viewport-fit=cover, user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 </svelte:head>
 
-<div class="font-switzer relative w-full h-full min-w-screen min-h-screen bg-slate-800 text-white pt-4 pb-8">
-  <Toaster />
-  <main class="flex flex-col gap-4 p-6 pb-16">
-    <nav class="flex gap-4 justify-between items-center">
-      <a 
-        href="/" 
-        onclick={() => {
-          posthog.capture("clicked: top nav", { button: "Homepage logo" });
-        }}
-        class="font-bold text-xl flex gap-2"
-      >
-        <Icon icon="game-icons:butterfly-warning" class="size-8" />
-        myb
-      </a>
+<QueryClientProvider client={queryClient}>
+  <div class="font-switzer relative w-full h-full min-w-screen min-h-screen bg-slate-800 text-white pt-4 pb-8">
+    <Toaster />
+    <main class="flex flex-col gap-4 p-6 pb-16">
+      <nav class="flex gap-4 justify-between items-center">
+        <a 
+          href="/" 
+          onclick={() => {
+            posthog.capture("clicked: top nav", { button: "Homepage logo" });
+          }}
+          class="font-bold text-xl flex gap-2"
+        >
+          <Icon icon="game-icons:butterfly-warning" class="size-8" />
+          myb
+        </a>
+        <div class="flex gap-4 items-center">
+          {#if user}
+            <form action="/?/logout" method="POST" class="flex gap-4">
+              <a 
+                href={`/p/${user.handle}`} 
+                onclick={() => {
+                  posthog.capture("clicked: top nav", { button: "User profile" });
+                }}
+                data-sveltekit-reload
+              >
+                <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
+              </a>
+              <button 
+                type="submit" 
+                onclick={() => {
+                  posthog.capture("clicked: top nav", { button: "Logout" });
+                }}
+                class="border rounded px-4 py-2"
+              >
+                Logout
+              </button>
+            </form>
+          {:else}
+            <form action="/?/login" method="POST" class="flex gap-2"> 
+              <input 
+                type="text" 
+                name="handle" 
+                placeholder="zeu.dev" 
+                bind:value={handleInput}
+                class="border rounded px-4 py-2 bg-transparent max-w-32" 
+              />
+              <button 
+                type="submit" 
+                onclick={() => {
+                  posthog.capture("clicked: top nav", { button: "Login" });
+                }}
+                disabled={!handleInput}
+                class="border rounded px-4 py-2"
+              >
+                Login
+              </button>
+            </form>
+          {/if}
+        </div>
+      </nav>
+
+      {@render children()}
+    </main>
+
+    <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-between">
+      {@render bottomControls?.()}
       <div class="flex gap-4 items-center">
-        {#if user}
-          <form action="/?/logout" method="POST" class="flex gap-4">
-            <a 
-              href={`/p/${user.handle}`} 
-              onclick={() => {
-                posthog.capture("clicked: top nav", { button: "User profile" });
-              }}
-              data-sveltekit-reload
-            >
-              <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
-            </a>
-            <button 
-              type="submit" 
-              onclick={() => {
-                posthog.capture("clicked: top nav", { button: "Logout" });
-              }}
-              class="border rounded px-4 py-2"
-            >
-              Logout
-            </button>
-          </form>
+        <a 
+          href="/search"
+          onclick={() => {
+            posthog.capture("clicked: bottom menu", { button: "Search" });
+          }}
+        >
+          <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
+        </a>
+        <button onclick={() => {
+          posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
+          toastComingSoon();
+        }}>
+          <Icon icon="hugeicons:all-bookmark" class="size-8" />
+        </button>
+
+        {#snippet PostDrawerTrigger()}
+          <button onclick={() => { 
+            posthog.capture("clicked: bottom menu", { button: "Create Post" });
+            if (!user) { toastError("Must be logged in to post"); } 
+          }}>
+            <Icon icon="hugeicons:quill-write-02" class="size-8" />
+          </button>
+        {/snippet}
+        {#if !user}
+          {@render PostDrawerTrigger()}
         {:else}
-          <form action="/?/login" method="POST" class="flex gap-2"> 
-            <input 
-              type="text" 
-              name="handle" 
-              placeholder="zeu.dev" 
-              bind:value={handleInput}
-              class="border rounded px-4 py-2 bg-transparent max-w-32" 
-            />
-            <button 
-              type="submit" 
-              onclick={() => {
-                posthog.capture("clicked: top nav", { button: "Login" });
-              }}
-              disabled={!handleInput}
-              class="border rounded px-4 py-2"
-            >
-              Login
-            </button>
-          </form>
+          <IconDrawer
+            trigger={PostDrawerTrigger}
+          >
+            {#snippet content()}
+              <form action="/?/createPost" method="POST" class="flex flex-col gap-4">
+                <textarea 
+                  name="content" 
+                  bind:value={contentInput} 
+                  placeholder="Say something" 
+                  class="bg-transparent border rounded px-4 py-2"
+                  style="field-sizing: content;"
+                  maxlength={300}
+                >
+                </textarea>
+                <div class="self-end flex gap-2">
+                  <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
+                    Save Draft
+                  </button>
+                  <button type="submit" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
+                    Post
+                  </button>
+                </div>
+              </form>
+
+              <a href="/console" class="underline">Drafts</a>
+            {/snippet}
+          </IconDrawer>
         {/if}
       </div>
-    </nav>
-
-    {@render children()}
-  </main>
-
-  <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-between">
-    {@render bottomControls?.()}
-    <div class="flex gap-4 items-center">
-      <a 
-        href="/search"
-        onclick={() => {
-          posthog.capture("clicked: bottom menu", { button: "Search" });
-        }}
-      >
-        <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
-      </a>
-      <button onclick={() => {
-        posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
-        toastComingSoon();
-      }}>
-        <Icon icon="hugeicons:all-bookmark" class="size-8" />
-      </button>
-      {#if !user}
-        {@render PostDrawerTrigger()}
-      {:else}
-        <IconDrawer
-          trigger={PostDrawerTrigger}
-          content={PostDrawerContent}
-        />
-      {/if}
-    </div>
-  </menu>
-</div>
-
-{#snippet PostDrawerTrigger()}
-  <button onclick={() => { 
-    posthog.capture("clicked: bottom menu", { button: "Create Post" });
-    if (!user) { toastError("Must be logged in to post"); } 
-  }}>
-    <Icon icon="hugeicons:quill-write-02" class="size-8" />
-  </button>
-{/snippet}
-
-{#snippet PostDrawerContent()}
-  <form action="/?/createPost" method="POST" class="flex flex-col gap-4">
-    <textarea 
-      name="content" 
-      bind:value={contentInput} 
-      placeholder="Say something" 
-      class="bg-transparent border rounded px-4 py-2"
-      style="field-sizing: content;"
-      maxlength={300}
-    >
-    </textarea>
-    <div class="self-end flex gap-2">
-      <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
-        Save Draft
-      </button>
-      <button type="submit" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
-        Post
-      </button>
-    </div>
-  </form>
-
-  <a href="/console" class="underline">Drafts</a>
-{/snippet}
+    </menu>
+  </div>
+</QueryClientProvider>
