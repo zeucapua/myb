@@ -16,26 +16,12 @@ export async function load({ locals, params }: PageServerLoadEvent) {
   if (agent instanceof Agent) {
     const profile = await agent.getProfile({ actor: did });
     profile.data.description = await renderTextToMarkdownToHTML(profile.data.description as string, agent);
-    const feed = await agent.getAuthorFeed({ actor: did });
-
-    for (const post of feed.data.feed) {
-      // @ts-ignore
-      post.html = await renderTextToMarkdownToHTML(post.post.record.text, agent);
-    }
-
-    return { profile: profile.data, feed: JSON.stringify(feed.data.feed) } 
+    return { profile: profile.data } 
   }
   else if (agent instanceof AtpBaseClient) {
     const profile = await agent.app.bsky.actor.getProfile({ actor: did });
     profile.data.description = await renderTextToMarkdownToHTML(profile.data.description as string, agent);
-    const feed = await agent.app.bsky.feed.getAuthorFeed({ actor: did });
-
-    for (const post of feed.data.feed) {
-      // @ts-ignore
-      post.html = await renderTextToMarkdownToHTML(post.post.record.text, agent);
-    }
-
-    return { profile: profile.data, feed: JSON.stringify(feed.data.feed) } 
+    return { profile: profile.data } 
   }
 }
 

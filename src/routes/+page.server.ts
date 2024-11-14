@@ -1,38 +1,10 @@
-import { error, fail, redirect, type Actions } from "@sveltejs/kit";
-import { isValidHandle } from "@atproto/syntax";
-import { atclient } from "$lib/server/client";
-import { Agent, AtpBaseClient, RichText } from "@atproto/api";
+import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/schema";
-import type { PageServerLoadEvent } from "./$types";
-import { eq } from "drizzle-orm";
-import { renderTextToMarkdownToHTML } from "$lib/utils";
-
-export async function load({ locals }: PageServerLoadEvent) {
-  if (locals.agent instanceof Agent) {
-    const { data } = await locals.agent.getTimeline();
-
-    for (const post of data.feed) {
-      // @ts-ignore
-      post.html = await renderTextToMarkdownToHTML(post.post.record.text, locals.agent);
-    }
-
-    return { feed: JSON.stringify(data.feed) };
-  }
-  else if (locals.agent instanceof AtpBaseClient) {
-    const { data } = await locals.agent.app.bsky.feed.getFeed({
-      // "Discover" feed
-      feed: "at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot"
-    });
-
-    for (const post of data.feed) {
-      // @ts-ignore
-      post.html = await renderTextToMarkdownToHTML(post.post.record.text, locals.agent);
-    }
-
-    return { feed: JSON.stringify(data.feed) };
-  }
-}
+import { atclient } from "$lib/server/client";
+import { isValidHandle } from "@atproto/syntax";
+import { Agent, AtpBaseClient, RichText } from "@atproto/api";
+import { error, fail, redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
   "login": async ({ request }) => {

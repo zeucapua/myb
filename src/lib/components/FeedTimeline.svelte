@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, type Snippet } from 'svelte';
+  import { getContext, onDestroy, type Snippet } from 'svelte';
   import { toastError } from "$lib/utils";
 
   import type { ActionData } from '../../routes/$types';
@@ -7,24 +7,23 @@
     import PostItem from './PostItem.svelte';
 
   type Props = {
-    form: ActionData | undefined;
-    stringifiedFeed: string;
+    feed: FeedViewPost[]
   }
 
   type FeedPost = FeedViewPost & { html: string };
   
-  let { form, stringifiedFeed }: Props = $props();
-  let feed = JSON.parse(stringifiedFeed) as FeedPost[];
+  let { feed }: Props = $props();
 
   let showReposts = $state(true);
   let showReplies = $state(true);
 
   let setBottomControls = getContext("setBottomControls") as (snippet: Snippet) => void;
+  let deleteBottomControl = getContext("deleteBottomControl") as (snippet: Snippet) => void;
   setBottomControls(postToggles);
 
-  if (form && !form.success) { 
-    toastError("Action failed"); 
-  }
+  onDestroy(() => {
+    deleteBottomControl(postToggles);
+  });
 </script>
 
 {#snippet postToggles()}
@@ -42,7 +41,7 @@
 
 
 <ol class="flex flex-col">
-  {#each feed as post}
+  {#each feed as post: FeedPost}
     {#if !(post.reason && !showReposts) && !(post.reply && !showReplies)}
       <li>
         <PostItem data={post} />

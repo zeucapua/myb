@@ -14,9 +14,11 @@
   const user = data.user as ProfileViewDetailed;
 
   // for individual pages/layouts to implement in context controls
-  let bottomControls = $state<Snippet>();
-  let setBottomControls = (snippet: Snippet) => bottomControls = snippet;
+  let bottomControls = $state<Snippet[]>([]);
+  let setBottomControls = (snippet: Snippet) => bottomControls.push(snippet);
+  let deleteBottomControl = (snippet: Snippet) => bottomControls = bottomControls.filter((s) => s != snippet);
   setContext("setBottomControls", setBottomControls);
+  setContext("deleteBottomControl", deleteBottomControl);
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -104,8 +106,12 @@
     </main>
 
     <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-between">
-      {@render bottomControls?.()}
-      <div class="flex gap-4 items-center">
+      {#if bottomControls.length > 0}
+        {#each bottomControls as controller: Snippet}
+          {@render controller()}
+        {/each}
+      {/if}
+      <div class="w-fit flex gap-4 items-center">
         <a 
           href="/search"
           onclick={() => {
