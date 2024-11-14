@@ -1,13 +1,14 @@
 <script lang="ts">
-  import Icon from "@iconify/svelte";
   import posthog from "posthog-js";
-  import { enhance } from "$app/forms";
-  import { toastComingSoon, toastSuccess } from "$lib/utils";
+  import { Tooltip } from "bits-ui";
+  import Icon from "@iconify/svelte";
   import { formatDistanceToNowStrict } from "date-fns";
+  import { toastComingSoon, toastSuccess } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
   import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
   import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
   import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
+    import { fade } from "svelte/transition";
 
   let { data }: { data: FeedViewPost } = $props();
 </script>
@@ -42,7 +43,7 @@
 
 <article class={`flex flex-col gap-4 border p-4 hover:bg-white/[0.025] transition-all duration-150 ${data.reason && "border-dashed"}`} data-sveltekit-reload>
   <div class="flex items-center justify-between w-full">
-    <a href={`/p/${data.post.author.handle}`} class="text-sm hover:underline flex gap-2 items-start">
+    <a href={`/p/${data.post.author.handle}`} class="text-sm hover:underline flex gap-2 items-center">
       <img 
         src={data.post.author.avatar} 
         alt={`${data.post.author.handle} profile picture`} 
@@ -59,9 +60,36 @@
       </div>
     </a>
 
-    <div class="flex gap-2">
+    <div class="flex gap-2 items-center">
       {#if data.reason}
         <Icon icon="bx:repost" />
+        <Tooltip.Root>
+          <Tooltip.Trigger>
+            <a href={`/p/${data.reason.by!.handle}`}>
+              <img 
+                src={data.reason.by!.avatar} 
+                alt={`${data.reason.by!.handle} profile picture`} 
+                class="size-8 rounded"
+              />
+            </a>
+          </Tooltip.Trigger>
+          <Tooltip.Content
+            transition={fade}
+            transitionConfig={{ y: 8, duration: 150 }}
+            sideOffset={8}
+            side="bottom"
+          >
+            <div class="bg-white">
+              <Tooltip.Arrow class="rounded-[2px] border-l border-t border-dark-10" />
+            </div>
+            <div
+              class="rounded flex flex-col justify-center rounded-input border border-dark-10 bg-white px-2 py-1 text-xs font-medium shadow-popover outline-none"
+            >
+              <p class="text-xs font-bold">{data.reason.by!.displayName}</p>
+              <p class="text-xs">@{data.reason.by!.handle}</p>
+            </div>
+          </Tooltip.Content>
+        </Tooltip.Root>
       {/if}
     </div>
   </div>
@@ -132,13 +160,9 @@
       <Icon icon="bx:repost" class="size-6" />
       {data.post.quoteCount}
     </button>
-    <form use:enhance action="/?/likePost" method="POST">
-      <input name="post_uri" type="hidden" value={data.post.uri} />
-      <input name="post_cid" type="hidden" value={data.post.cid} />
-      <button type="submit" class="flex gap-1">
-        <Icon icon="prime:heart" class="size-6" />
-        {data.post.likeCount}
-      </button>
-    </form>
+    <button type="submit" class="flex gap-1">
+      <Icon icon="prime:heart" class="size-6" />
+      {data.post.likeCount}
+    </button>
   </menu>
 </article>

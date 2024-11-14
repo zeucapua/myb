@@ -1,10 +1,7 @@
 <script lang="ts">
+  import PostItem from './PostItem.svelte';
   import { getContext, onDestroy, type Snippet } from 'svelte';
-  import { toastError } from "$lib/utils";
-
-  import type { ActionData } from '../../routes/$types';
   import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
-    import PostItem from './PostItem.svelte';
 
   type Props = {
     feed: FeedViewPost[]

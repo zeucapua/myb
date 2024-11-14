@@ -7,8 +7,16 @@
   import { createInfiniteQuery } from "@tanstack/svelte-query";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
   import type { ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
+  import { enhance } from "$app/forms";
+    import { getContext, onDestroy, type Snippet } from "svelte";
 
   let { data }: { data: { profile: ProfileViewDetailed }} = $props();
+  let setBottomControls = getContext("setBottomControls") as (snippet: Snippet) => void;
+  let deleteBottomControl = getContext("deleteBottomControl") as (snippet: Snippet) => void;
+  setBottomControls(profileControls);
+
+  onDestroy(() => deleteBottomControl(profileControls));
+
 
   const authorFeedQuery = createInfiniteQuery({
     queryKey: ["authorFeed"],
@@ -28,6 +36,23 @@
     return $authorFeedQuery.data?.pages.flatMap(page => page.feed) as FeedViewPost[] ?? []
   });
 </script>
+
+{#snippet profileControls()}
+  {#if data.profile.viewer!.following}
+    <form use:enhance method="POST" action="?/unfollowUser">
+      <input name="follow_uri" type="hidden" value={data.profile.viewer?.following} />
+      <button type="submit" class="px-2 py-1 border rounded border-red-500">
+        Unfollow 
+      </button>
+    </form>
+  {:else if !data.profile.viewer!.followedBy}
+    <form use:enhance method="POST" action="?/followUser">
+      <button type="submit" class="px-2 py-1 border rounded border-yellow-500">
+        Follow
+      </button>
+    </form>
+  {/if}
+{/snippet}
 
 <div class="flex flex-col gap-4 mx-auto w-full max-w-xl">
 
@@ -88,7 +113,7 @@
       {@html data.profile.description}
     </div>
   </section>
-  <section class="flex flex-col gap-4 items-center">
+  <section class="flex flex-col gap-4 items-center w-full">
     {#if $authorFeedQuery.isLoading}
       <p>Loading...</p>
     {:else if $authorFeedQuery.isError}
