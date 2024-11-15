@@ -35,7 +35,7 @@
     <p class="text-sm text-white prose prose-invert prose-p:text-white prose-sm prose-pink">
       {@html
         // @ts-ignore
-        record.value.text
+        record.value?.text || ""
       }
     </p>
   </article>
@@ -65,17 +65,17 @@
         <Icon icon="bx:repost" />
         <Tooltip.Root>
           <Tooltip.Trigger>
-            <a href={`/p/${data.reason.by!.handle}`}>
+            <a href={`/p/${data.reason.by!.handle || "unknown"}`}>
               <img 
                 src={data.reason.by!.avatar} 
-                alt={`${data.reason.by!.handle} profile picture`} 
+                alt={`${data.reason.by!.handle || "unknown"} profile picture`} 
                 class="size-8 rounded"
               />
             </a>
           </Tooltip.Trigger>
           <Tooltip.Content
             transition={fade}
-            transitionConfig={{ y: 8, duration: 150 }}
+            transitionConfig={{ duration: 150 }}
             sideOffset={8}
             side="bottom"
           >
@@ -85,8 +85,8 @@
             <div
               class="rounded flex flex-col justify-center rounded-input border border-dark-10 bg-white px-2 py-1 text-xs font-medium shadow-popover outline-none"
             >
-              <p class="text-xs font-bold">{data.reason.by!.displayName}</p>
-              <p class="text-xs">@{data.reason.by!.handle}</p>
+              <p class="text-xs font-bold">{data.reason.by!.displayName || "unknown"}</p>
+              <p class="text-xs">@{data.reason.by!.handle || "unknown"}</p>
             </div>
           </Tooltip.Content>
         </Tooltip.Root>

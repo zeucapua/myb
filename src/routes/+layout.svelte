@@ -105,12 +105,7 @@
       {@render children()}
     </main>
 
-    <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit px-6 pt-6 pb-6 border-t justify-between">
-      {#if bottomControls.length > 0}
-        {#each bottomControls as controller: Snippet}
-          {@render controller()}
-        {/each}
-      {/if}
+    <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit p-4 border-t justify-between">
       <div class="w-fit flex gap-4 items-center">
         <a 
           href="/search"
@@ -165,6 +160,14 @@
               <a href="/console" class="underline">Drafts</a>
             {/snippet}
           </IconDrawer>
+        {/if}
+      </div>
+
+      <div class="flex gap-4 self-end items-center">
+        {#if bottomControls.length > 0}
+          {#each bottomControls as controller: Snippet}
+            {@render controller()}
+          {/each}
         {/if}
       </div>
     </menu>

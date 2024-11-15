@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { Toggle } from 'bits-ui';
   import PostItem from './PostItem.svelte';
   import { getContext, onDestroy, type Snippet } from 'svelte';
   import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
+    import Icon from '@iconify/svelte';
 
   type Props = {
     feed: FeedViewPost[]
@@ -25,14 +27,18 @@
 
 {#snippet postToggles()}
   <menu class="flex gap-4 items-center">
-    <label class="flex gap-2">
-      <input type="checkbox" bind:checked={showReposts} />
-      Reposts
-    </label>
-    <label class="flex gap-2">
-      <input type="checkbox" bind:checked={showReplies} />
-      Replies
-    </label>
+    <Toggle.Root 
+      bind:pressed={showReplies}
+      class="inline-flex size-10 items-center justify-center rounded-[9px] transition-all hover:bg-white/5 active:scale-98 active:bg-dark-10 data-[state=on]:bg-white/5 data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
+    >
+      <Icon icon="ri:reply-fill" />
+    </Toggle.Root>
+    <Toggle.Root 
+      bind:pressed={showReposts}
+      class="inline-flex size-10 items-center justify-center rounded-[9px] transition-all hover:bg-white/5 active:scale-98 active:bg-dark-10 data-[state=on]:bg-white/5 data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
+    >
+      <Icon icon="bx:repost" />
+    </Toggle.Root>
   </menu>
 {/snippet}
 
