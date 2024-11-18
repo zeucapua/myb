@@ -69,7 +69,7 @@
 {#snippet feedSelector()}
   <Select.Root items={feeds} bind:selected={selectedFeed}>
     <Select.Trigger
-      class="inline-flex h-input w-48 justify-between items-center rounded-lg border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50  focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+      class="inline-flex h-input py-2 w-48 justify-between items-center rounded-lg border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50  focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
       aria-label="Select a feed"
     >
       <Select.Value class="text-sm" placeholder="Select a feed" />

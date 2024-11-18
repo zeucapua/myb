@@ -8,9 +8,10 @@
   import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
   import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
   import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-    import { fade } from "svelte/transition";
+  import { fade } from "svelte/transition";
 
   let { data }: { data: FeedViewPost } = $props();
+  console.log({ data });
 </script>
 
 {#snippet quotedPost(record: ViewRecord | GeneratorView)}
