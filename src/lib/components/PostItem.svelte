@@ -11,7 +11,6 @@
   import { fade } from "svelte/transition";
 
   let { data }: { data: FeedViewPost } = $props();
-  console.log({ data });
 </script>
 
 {#snippet quotedPost(record: ViewRecord | GeneratorView)}

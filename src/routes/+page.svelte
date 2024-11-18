@@ -4,8 +4,8 @@
   import { createInfiniteQuery } from "@tanstack/svelte-query";
   import FeedTimeline from "$lib/components/FeedTimeline.svelte";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs.js";
-    import Icon from "@iconify/svelte";
-    import { fly } from "svelte/transition";
+  import Icon from "@iconify/svelte";
+  import { fly } from "svelte/transition";
 
   let { data } = $props();
   let user = data.user;

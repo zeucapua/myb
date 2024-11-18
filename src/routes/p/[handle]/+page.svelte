@@ -4,12 +4,12 @@
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
   import type { ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 
-  let { data }: { data: { did: string } }= $props();
+  let { data }: { data: { profile: ProfileViewDetailed } }= $props();
   const authorFeedQuery = createInfiniteQuery({
     queryKey: ["authorFeed"],
     queryFn: async ({ pageParam }) => {
       const queryParams = new URLSearchParams();
-      queryParams.set("actor", data.did); 
+      queryParams.set("actor", data.profile.did); 
       queryParams.set("cursor", pageParam || "");
       const response = await fetch(`/api/getAuthorFeed?${queryParams.toString()}`);
       const results = await response.json() as { feed: FeedViewPost[], nextCursor: string }; 

@@ -15,8 +15,6 @@ export const actions: Actions = {
 
     if (!did) { error(500, "Handle not resolved to DID"); }
 
-    console.log({ handle, did });
-
     await agent.follow(did);
     return { status: "followed" };
   },
@@ -27,7 +25,7 @@ export const actions: Actions = {
     }
 
     const formData = await request.formData();
-    const followUri = formData.get("follow_uri") as string | undefined;
+    const followUri = formData.get("follow_uri") as string;
 
     if (!followUri) {
       error(500, "No follow URI to delete");
@@ -35,7 +33,7 @@ export const actions: Actions = {
 
     try {
       await agent.deleteFollow(followUri);
-      return { status: "followed" };
+      return { status: "deletedFollow" };
     }
     catch {
       error(500, "Internal error");
