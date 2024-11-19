@@ -1,0 +1,1 @@
+ALTER TABLE `bookmark` DROP COLUMN `link`;

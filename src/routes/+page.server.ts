@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/schema";
 import { atclient } from "$lib/server/client";
@@ -81,12 +81,45 @@ export const actions: Actions = {
 
     const agent = locals.agent;
     if (agent instanceof AtpBaseClient) {
-      return { success: false }
+      return fail(401); 
     }
 
     if (agent instanceof Agent) {
-      const { uri: resUri } = await agent.like(uri, cid);
+      await agent.like(uri, cid);
       return { success: true }
     }
+  },
+  "bookmarkPost": async ({ request, locals }) => {
+    if (!locals.user) {
+      return fail(401); 
+    }
+
+    const formData = await request.formData();
+    const uri = formData.get("post_uri") as string;
+    const isBookmarked = formData.get("is_bookmarked") as string;
+
+    if (isBookmarked === "false") {
+      const bookmark = await db.insert(schema.Bookmark)
+        .values({ 
+          id: crypto.randomUUID(),
+          uri,
+          authorDid: locals.user.did,
+        })
+        .returning();
+
+      locals.bookmarks.add(bookmark[0].uri ?? "");
+      return { message: "bookmarked", uri };
+    }
+    else {
+      const removed = await db.delete(schema.Bookmark)
+        .where(and(
+          eq(schema.Bookmark.authorDid, locals.user.did),
+          eq(schema.Bookmark.uri, uri)
+        ))
+        .returning();
+      locals.bookmarks.delete(removed[0].uri ?? "");
+      return { message: "unbookmarked", uri };
+    }
+    
   }
 };

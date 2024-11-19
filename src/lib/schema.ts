@@ -19,6 +19,6 @@ export const DraftPost = sqliteTable("draft_post", {
 export const Bookmark = sqliteTable("bookmark", {
   id: text("id", { mode: "text" }).primaryKey().unique(),
   uri: text("uri", { mode: "text" }),
+  // who's bookmark is it?
   authorDid: text("author_did", { mode: "text" }).notNull(),
-  link: text("link", { mode: "text" }).notNull()
 });

@@ -12,5 +12,7 @@ export async function load({ locals }: LayoutServerLoadEvent) {
   }
 
   const user = locals.user;
-  return { user }
+  const bookmarks = locals.bookmarks ?? new Set<string>();
+  return { user, bookmarks }
 }
+

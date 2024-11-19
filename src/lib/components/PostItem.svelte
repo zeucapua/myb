@@ -2,15 +2,19 @@
   import posthog from "posthog-js";
   import { Tooltip } from "bits-ui";
   import Icon from "@iconify/svelte";
+  import { applyAction, enhance } from "$app/forms";
+  import { fade } from "svelte/transition";
   import { formatDistanceToNowStrict } from "date-fns";
   import { toastComingSoon, toastSuccess } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
   import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
   import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
   import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-  import { fade } from "svelte/transition";
+  import { page } from "$app/stores";
 
   let { data }: { data: FeedViewPost } = $props();
+  const bookmarks = $page.data.bookmarks as Set<string>; 
+  let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
 </script>
 
 {#snippet quotedPost(record: ViewRecord | GeneratorView)}
@@ -127,7 +131,7 @@
       {/each}
     {:else if data.post.embed.$type === "app.bsky.embed.external#view"}
       <img src={data.post.embed.external!.uri} alt={data.post.embed.external!.description} />
-    {:else if data.post.embed.$type === "app.bsky.embed.record#view"}
+    {:else if data.post.embed.$type === "app.bsky.embed.record#view" && !(data.post.embed.record!.$type === "app.bsky.graph.defs#starterPackViewBasic")}
       {@render quotedPost(data.post.embed.record as ViewRecord)}
     {:else}
       <div class="flex gap-2 justify-between text-xs border px-4 py-2 rounded items-center">
@@ -149,9 +153,34 @@
   {/if}
 
   <menu class="grid grid-cols-4 justify-items-end">
-    <button onclick={toastComingSoon} class="flex gap-1 justify-self-start">
-      <Icon icon="ph:wrench" class="size-6" />
-    </button>
+    <div class="flex gap-2 justify-self-start">
+      <button onclick={toastComingSoon} class="flex gap-1 justify-self-start">
+        <Icon icon="ph:wrench" class="size-6" />
+      </button>
+      <form
+        method="POST" 
+        action="/?/bookmarkPost"
+        use:enhance={() => {
+          return async ({ result }) => {
+            // @ts-ignore
+            if (result.data.uri === data.post.uri) {
+              // @ts-ignore
+              isBookmarked = result.data.message === "bookmarked";
+            }
+            await applyAction(result);
+          }
+        }} 
+      >
+        <input name="post_uri" type="hidden" value={data.post.uri} />
+        <input name="is_bookmarked" type="hidden" value={isBookmarked} />
+        <button type="submit" class="flex gap-1 justify-self-start">
+          <Icon 
+            icon={isBookmarked ? "mingcute:bookmark-fill" : "mingcute:bookmark-line"}
+            class="size-6" 
+          />
+        </button>
+      </form>
+    </div>
     <button onclick={toastComingSoon} class="flex gap-1">
       <Icon icon="iconamoon:comment" class="size-6" />
       {data.post.replyCount}

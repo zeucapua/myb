@@ -115,12 +115,14 @@
         >
           <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
         </a>
-        <button onclick={() => {
-          posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
-          toastComingSoon();
-        }}>
+        <a
+          href="/bookmarks"
+          onclick={() => {
+            posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
+          }}
+        >
           <Icon icon="hugeicons:all-bookmark" class="size-8" />
-        </button>
+        </a>
 
         {#snippet PostDrawerTrigger()}
           <button onclick={() => { 
