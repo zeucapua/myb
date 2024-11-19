@@ -4,8 +4,9 @@ import { error, json, type RequestHandler } from "@sveltejs/kit";
 import type { Record } from "@atproto/api/dist/client/types/com/atproto/repo/listRecords";
 import { AtpBaseClient } from "@atproto/api";
 import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+import { renderTextToMarkdownToHTML } from "$lib/utils";
 
-// Given a cursor and limit (opt)
+// Given days, and limit (opt)
 // Return a JSON of FeedViewPost
 export const GET: RequestHandler = async ({ url }) => {
   const queryParams = url.searchParams;
@@ -34,10 +35,12 @@ export const GET: RequestHandler = async ({ url }) => {
     ) >= 1
   ) as FeedViewPost[];
 
+  const agent = new AtpBaseClient({ service: "https://api.bsky.app" });
+
   // render post to html
   for (const post of records) {
     // @ts-ignore
-    post.html = await renderTextToMarkdownToHTML(post.post.record.text, locals.agent);
+    post.html = await renderTextToMarkdownToHTML(post.post.record.text, agent);
   }
 
   // order by top skeet
