@@ -2,6 +2,7 @@
   import posthog from "posthog-js";
   import { Tooltip } from "bits-ui";
   import Icon from "@iconify/svelte";
+  import { page } from "$app/stores";
   import { applyAction, enhance } from "$app/forms";
   import { fade } from "svelte/transition";
   import { formatDistanceToNowStrict } from "date-fns";
@@ -10,7 +11,6 @@
   import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
   import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
   import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-  import { page } from "$app/stores";
 
   let { data }: { data: FeedViewPost } = $props();
   const bookmarks = $page.data.bookmarks as Set<string>; 

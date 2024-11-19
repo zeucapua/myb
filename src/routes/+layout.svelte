@@ -105,73 +105,87 @@
       {@render children()}
     </main>
 
-    <menu class="z-10 fixed bg-slate-800 bottom-0 inset-x-0 flex w-full h-fit p-4 border-t justify-between">
-      <div class="w-fit flex gap-4 items-center">
-        <a 
-          href="/search"
-          onclick={() => {
-            posthog.capture("clicked: bottom menu", { button: "Search" });
-          }}
-        >
-          <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
-        </a>
-        <a
-          href="/bookmarks"
-          onclick={() => {
-            posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
-          }}
-        >
-          <Icon icon="hugeicons:all-bookmark" class="size-8" />
-        </a>
+    {#snippet PostDrawerTrigger()}
+      <button 
+        onclick={() => { 
+          posthog.capture("clicked: bottom menu", { button: "Create Post" });
+          if (!user) { toastError("Must be logged in to post"); } 
+        }}
+        class="fixed bottom-20 right-4 z-50 rounded-full p-4 bg-white text-slate-800"
+      >
+        <Icon icon="hugeicons:quill-write-02" class="size-6" />
+      </button>
+    {/snippet}
+    {#if !user}
+      {@render PostDrawerTrigger()}
+    {:else}
+      <IconDrawer
+        trigger={PostDrawerTrigger}
+      >
+        {#snippet content()}
+          <form action="/?/createPost" method="POST" class="flex flex-col gap-4">
+            <textarea 
+              name="content" 
+              bind:value={contentInput} 
+              placeholder="Say something" 
+              class="bg-transparent border rounded px-4 py-2"
+              style="field-sizing: content;"
+              maxlength={300}
+            >
+            </textarea>
+            <div class="self-end flex gap-2">
+              <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
+                Save Draft
+              </button>
+              <button type="submit" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
+                Post
+              </button>
+            </div>
+          </form>
 
-        {#snippet PostDrawerTrigger()}
-          <button onclick={() => { 
-            posthog.capture("clicked: bottom menu", { button: "Create Post" });
-            if (!user) { toastError("Must be logged in to post"); } 
-          }}>
-            <Icon icon="hugeicons:quill-write-02" class="size-8" />
-          </button>
+          <a href="/console" class="underline">Drafts</a>
         {/snippet}
-        {#if !user}
-          {@render PostDrawerTrigger()}
-        {:else}
-          <IconDrawer
-            trigger={PostDrawerTrigger}
+      </IconDrawer>
+    {/if}
+
+    <menu class="z-10 flex flex-col gap-4 items-end fixed bottom-0 inset-x-0"> 
+      <section class="flex w-full h-fit p-4 border-t justify-between bg-slate-800">
+        <div class="w-fit flex gap-4 items-center">
+          <a 
+            href="/search"
+            onclick={() => {
+              posthog.capture("clicked: bottom menu", { button: "Search" });
+            }}
           >
-            {#snippet content()}
-              <form action="/?/createPost" method="POST" class="flex flex-col gap-4">
-                <textarea 
-                  name="content" 
-                  bind:value={contentInput} 
-                  placeholder="Say something" 
-                  class="bg-transparent border rounded px-4 py-2"
-                  style="field-sizing: content;"
-                  maxlength={300}
-                >
-                </textarea>
-                <div class="self-end flex gap-2">
-                  <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
-                    Save Draft
-                  </button>
-                  <button type="submit" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
-                    Post
-                  </button>
-                </div>
-              </form>
+            <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
+          </a>
+          <a
+            href="/bookmarks"
+            onclick={() => {
+              posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
+            }}
+          >
+            <Icon icon="hugeicons:all-bookmark" class="size-8" />
+          </a>
+          <a
+            href="/"
+            onclick={() => {
+              posthog.capture("clicked: bottom menu", { button: "Home" });
+            }}
+          >
+            <Icon icon="iconamoon:home-light" class="size-8" />
+          </a>
 
-              <a href="/console" class="underline">Drafts</a>
-            {/snippet}
-          </IconDrawer>
-        {/if}
-      </div>
+        </div>
 
-      <div class="flex gap-4 self-end items-center">
-        {#if bottomControls.length > 0}
-          {#each bottomControls as controller: Snippet}
-            {@render controller()}
-          {/each}
-        {/if}
-      </div>
+        <div class="flex gap-4 self-end items-center">
+          {#if bottomControls.length > 0}
+            {#each bottomControls as controller: Snippet}
+              {@render controller()}
+            {/each}
+          {/if}
+        </div>
+      </section>
     </menu>
   </div>
 </QueryClientProvider>
