@@ -15,6 +15,7 @@
   - [x] Copy DID/Handle
   - [x] Open handle domain site
   - [x] Follow/Unfollow user
+  - [x] Skeets Stats Page
 - [ ] Posts
   - [x] Render posts' facets
   - [x] Draft posts
