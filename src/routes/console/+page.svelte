@@ -43,7 +43,7 @@
       <p>{draft.content}</p>
       <div class="flex gap-4">
         <button onclick={() => editDraft(draft)}>Write</button>
-        <form action="/?/deleteDraft" method="POST">
+        <form use:enhance action="/?/deleteDraft" method="POST">
           <input name="id" type="hidden" value={draft.id} />
           <button type="submit">Delete</button>
         </form>
