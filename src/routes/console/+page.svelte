@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance } from "$app/forms";
   import * as schema from "$lib/schema";
 
   let { data } = $props();
@@ -12,7 +13,7 @@
 </script>
 
 <h1 class="text-3xl font-bold">Console</h1>
-<form action="/?/createPost" method="POST" class="flex flex-col gap-4">
+<form use:enhance action="/?/createPost" method="POST" class="flex flex-col gap-4">
   <input name="draft_id" type="hidden" bind:value={currentDraftId} />
   <textarea 
     name="content" 

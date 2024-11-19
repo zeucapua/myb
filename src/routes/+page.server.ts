@@ -44,7 +44,7 @@ export const actions: Actions = {
       await db.delete(schema.DraftPost).where(eq(schema.DraftPost.id, draftId));
     }
   },
-  "saveDraft": async ({ request, locals }) => {
+  "saveDraft": async ({ url, request, locals }) => {
     const formData = await request.formData();
     const content = formData.get("content") as string;
     try {
@@ -62,8 +62,9 @@ export const actions: Actions = {
     catch (e) {
       return fail(500);
     }
+    
   },
-  "deleteDraft": async ({ request }) => {
+  "deleteDraft": async ({ url, request }) => {
     const formData = await request.formData();
     const id = formData.get("id") as string;
 

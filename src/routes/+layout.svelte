@@ -2,6 +2,7 @@
   import '../app.css';
   import posthog from 'posthog-js';
   import Icon from "@iconify/svelte";
+  import { enhance } from '$app/forms';
   import { browser } from '$app/environment';
   import { Toaster } from 'svelte-french-toast';
   import { setContext, type Snippet } from 'svelte';
@@ -123,7 +124,7 @@
         trigger={PostDrawerTrigger}
       >
         {#snippet content()}
-          <form action="/?/createPost" method="POST" class="flex flex-col gap-4">
+          <form use:enhance action="/?/createPost" method="POST" class="flex flex-col gap-4">
             <textarea 
               name="content" 
               bind:value={contentInput} 
