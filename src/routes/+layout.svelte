@@ -1,12 +1,13 @@
 <script lang="ts">
   import '../app.css';
   import posthog from 'posthog-js';
+  import { Button } from 'bits-ui';
   import Icon from "@iconify/svelte";
   import { enhance } from '$app/forms';
   import { browser } from '$app/environment';
   import { Toaster } from 'svelte-french-toast';
   import { setContext, type Snippet } from 'svelte';
-  import { toastComingSoon, toastError } from "$lib/utils";
+  import { toastError } from "$lib/utils";
   import IconDrawer from '$lib/components/IconDrawer.svelte';
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
@@ -107,15 +108,15 @@
     </main>
 
     {#snippet PostDrawerTrigger()}
-      <button 
+      <Button.Root
         onclick={() => { 
           posthog.capture("clicked: bottom menu", { button: "Create Post" });
           if (!user) { toastError("Must be logged in to post"); } 
         }}
-        class="fixed bottom-20 right-4 z-50 rounded-full p-4 bg-white text-slate-800"
+        class="fixed bottom-20 right-4 z-50 rounded-full flex items-center bg-pink-500 p-4 w-fit gap-4 hover:bg-pink-600/95 active:scale-95 active:transition-all duration-150"
       >
         <Icon icon="hugeicons:quill-write-02" class="size-6" />
-      </button>
+      </Button.Root>
     {/snippet}
     {#if !user}
       {@render PostDrawerTrigger()}
