@@ -8,7 +8,7 @@ Functionality is priority, styling second, so if the UI/UX is a little unintuiti
 please know it is subject to change as more users try it out! If you find bugs or want features not listed above,
 please send a GitHub issue my way!
 
-<iframe src="https://github.com/sponsors/zeucapua/button" title="Sponsor zeucapua" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+[![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/zeucapua)
 
 ## Features
 - [x] Login/Logout via OAuth
