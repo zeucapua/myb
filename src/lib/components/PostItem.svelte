@@ -11,11 +11,13 @@
   import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
   import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
   import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
+    import { goto } from "$app/navigation";
 
   let { data }: { data: FeedViewPost } = $props();
   const user = $page.data.user;
   const bookmarks = $page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
+  const record_id = data.post.uri.split("/").at(data.post.uri.split("/").length - 1);
 </script>
 
 {#snippet quotedPost(record: ViewRecord | GeneratorView)}
@@ -48,22 +50,29 @@
 
 <article class={`flex flex-col gap-4 border p-4 hover:bg-white/[0.025] transition-all duration-150 ${data.reason && "border-dashed"}`} data-sveltekit-reload>
   <div class="flex items-center justify-between w-full">
-    <a href={`/p/${data.post.author.handle}`} class="text-sm hover:underline flex gap-2 items-center">
-      <img 
-        src={data.post.author.avatar} 
-        alt={`${data.post.author.handle} profile picture`} 
-        class="size-8 rounded"
-      />
-      <div class="flex flex-col">
-        <p class="flex gap-1 items-center">
-          {data.post.author.displayName} 
-          <span class="text-xs">@{data.post.author.handle}</span>
-        </p>
+    <div class="text-sm flex gap-2 items-center">
+      <a href={`/p/${data.post.author.handle}`} >
+        <img 
+          src={data.post.author.avatar} 
+          alt={`${data.post.author.handle} profile picture`} 
+          class="size-8 rounded"
+        />
+      </a>
+      <div class="flex flex-col hover:underline ">
+        <a href={`/p/${data.post.author.handle}`} >
+          <p class="flex gap-1 items-center">
+            {data.post.author.displayName} 
+            <span class="text-xs">@{data.post.author.handle}</span>
+          </p>
+        </a>
         <time class="text-xs font-light">
           {formatDistanceToNowStrict(new Date(data.post.indexedAt))} ago
         </time>
       </div>
-    </a>
+      <a href={`/p/${data.post.author.handle}/${record_id}`}>
+        <Icon icon="ep:right" />
+      </a>
+    </div>
 
     <div class="flex gap-2 items-center">
       {#if data.reason}
