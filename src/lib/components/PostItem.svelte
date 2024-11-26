@@ -6,13 +6,14 @@
   import { applyAction, enhance } from "$app/forms";
   import { fade } from "svelte/transition";
   import { formatDistanceToNowStrict } from "date-fns";
-  import { toastComingSoon, toastSuccess } from "$lib/utils";
+  import { toastComingSoon, toastError, toastSuccess } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
   import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
   import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
   import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 
   let { data }: { data: FeedViewPost } = $props();
+  const user = $page.data.user;
   const bookmarks = $page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
 </script>
@@ -157,29 +158,38 @@
       <button onclick={toastComingSoon} class="flex gap-1 justify-self-start">
         <Icon icon="ph:wrench" class="size-6" />
       </button>
-      <form
-        method="POST" 
-        action="/?/bookmarkPost"
-        use:enhance={() => {
-          return async ({ result }) => {
-            // @ts-ignore
-            if (result.data.uri === data.post.uri) {
-              // @ts-ignore
-              isBookmarked = result.data.message === "bookmarked";
-            }
-            await applyAction(result);
-          }
-        }} 
-      >
-        <input name="post_uri" type="hidden" value={data.post.uri} />
-        <input name="is_bookmarked" type="hidden" value={isBookmarked} />
-        <button type="submit" class="flex gap-1 justify-self-start">
+      {#if !user}
+        <button onclick={() => toastError("Log in to bookmark")} class="flex gap-1 justify-self-start">
           <Icon 
             icon={isBookmarked ? "mingcute:bookmark-fill" : "mingcute:bookmark-line"}
             class="size-6" 
           />
         </button>
-      </form>
+      {:else}
+        <form
+          method="POST" 
+          action="/?/bookmarkPost"
+          use:enhance={() => {
+            return async ({ result }) => {
+              // @ts-ignore
+              if (result.data.uri === data.post.uri) {
+                // @ts-ignore
+                isBookmarked = result.data.message === "bookmarked";
+              }
+              await applyAction(result);
+            }
+          }} 
+        >
+          <input name="post_uri" type="hidden" value={data.post.uri} />
+          <input name="is_bookmarked" type="hidden" value={isBookmarked} />
+          <button type="submit" class="flex gap-1 justify-self-start">
+            <Icon 
+              icon={isBookmarked ? "mingcute:bookmark-fill" : "mingcute:bookmark-line"}
+              class="size-6" 
+            />
+          </button>
+        </form>
+      {/if}
     </div>
     <button onclick={toastComingSoon} class="flex gap-1">
       <Icon icon="iconamoon:comment" class="size-6" />
