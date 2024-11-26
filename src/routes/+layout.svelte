@@ -161,14 +161,25 @@
           >
             <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
           </a>
-          <a
-            href="/bookmarks"
-            onclick={() => {
-              posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
-            }}
-          >
-            <Icon icon="hugeicons:all-bookmark" class="size-8" />
-          </a>
+          {#if user}
+            <a
+              href="/bookmarks"
+              onclick={() => {
+                posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
+              }}
+            >
+              <Icon icon="hugeicons:all-bookmark" class="size-8" />
+            </a>
+          {:else}
+            <button
+              onclick={() => {
+                posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
+                toastError("Log in to see bookmarks");
+              }}
+            >
+              <Icon icon="hugeicons:all-bookmark" class="size-8" />
+            </button>
+          {/if}
           <a
             href="/"
             onclick={() => {
