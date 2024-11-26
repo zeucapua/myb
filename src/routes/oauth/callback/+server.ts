@@ -12,7 +12,15 @@ export async function GET({ request, cookies }: RequestEvent) {
     const key = decodeBase64(MYB_PASSWORD);
     const encrypted = await encryptString(key, session.did);
     const encoded = encodeBase64urlNoPadding(encrypted);
-    cookies.set("sid", encoded, { path: "/", maxAge: 60 * 60, httpOnly: true, sameSite: "lax" });
+    const stayLoggedIn = cookies.get("stayLoggedIn") === "true";
+    const maxAge = !stayLoggedIn && 60 * 60;
+
+    cookies.set("sid", encoded, { 
+      path: "/", 
+      httpOnly: true,
+      sameSite: "lax",
+      ...(maxAge && { maxAge })
+    });
   } catch (err) {
     console.log(err);
     error(500, { message: (err as Error).message });

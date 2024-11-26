@@ -7,10 +7,12 @@ import { Agent, AtpBaseClient, RichText } from "@atproto/api";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
-  "login": async ({ request }) => {
+  "login": async ({ cookies, request }) => {
     const formData = await request.formData();
     const handle = formData.get("handle") as string;
     if (!isValidHandle(handle)) { error(400, { message: "invalid handle" }); }
+    const stayLoggedIn = (formData.get("stay_logged_in") as string) === "on"; 
+    cookies.set("stayLoggedIn", stayLoggedIn.toString(), { path: "/", maxAge: 60 });
 
     const url = await atclient.authorize(handle, { scope: "atproto transition:generic" });
     if (!url) {
@@ -20,6 +22,7 @@ export const actions: Actions = {
   },
   "logout": async ({ cookies }) => {
     cookies.delete("sid", { path: "/" });
+    cookies.delete("stayLoggedIn", { path: "/" });
     redirect(301, "/");
   },
   "createPost": async ({ request, locals }) => {

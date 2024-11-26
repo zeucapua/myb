@@ -11,7 +11,7 @@ declare global {
 		interface Locals {
       agent: Agent | AtpBaseClient | undefined;
       user: ProfileViewDetailed;
-      bookmarks: Set<string>
+      bookmarks: Set<string>;
     }
 		// interface PageData {}
 		// interface PageState {}
