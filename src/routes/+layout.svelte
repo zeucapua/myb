@@ -32,6 +32,7 @@
 
   let handleInput = $state("");
   let contentInput = $state("");
+  let stayLoggedInChecked = $state(false);
 </script>
 
 <svelte:head>
@@ -81,24 +82,34 @@
               </button>
             </form>
           {:else}
-            <form action="/?/login" method="POST" class="flex gap-2"> 
-              <input 
-                type="text" 
-                name="handle" 
-                placeholder="zeu.dev" 
-                bind:value={handleInput}
-                class="border rounded px-4 py-2 bg-transparent max-w-32" 
-              />
-              <button 
-                type="submit" 
-                onclick={() => {
-                  posthog.capture("clicked: top nav", { button: "Login" });
-                }}
-                disabled={!handleInput}
-                class="border rounded px-4 py-2"
-              >
-                Login
-              </button>
+            <form action="/?/login" method="POST" class="flex flex-col gap-2 items-end"> 
+              <div class="flex gap-2">
+                <input 
+                  type="text" 
+                  name="handle" 
+                  placeholder="zeu.dev" 
+                  bind:value={handleInput}
+                  class="border rounded px-4 py-2 bg-transparent max-w-32 h-fit" 
+                />
+                <button 
+                  type="submit" 
+                  onclick={() => {
+                    posthog.capture("clicked: top nav", { button: "Login" });
+                  }}
+                  disabled={!handleInput}
+                  class="border rounded px-4 py-2"
+                >
+                  Login
+                </button>
+              </div>
+              <label for="stay_logged_in">
+                <input
+                  type="checkbox"
+                  name="stay_logged_in"
+                  bind:checked={stayLoggedInChecked}
+                />
+                Stay Logged In
+              </label>
             </form>
           {/if}
         </div>
