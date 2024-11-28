@@ -1,50 +1,19 @@
 <script lang="ts">
-  import posthog from "posthog-js";
   import { Tooltip } from "bits-ui";
   import Icon from "@iconify/svelte";
   import { page } from "$app/stores";
   import { applyAction, enhance } from "$app/forms";
   import { fade } from "svelte/transition";
   import { formatDistanceToNowStrict } from "date-fns";
-  import { toastComingSoon, toastError, toastSuccess } from "$lib/utils";
+  import { toastComingSoon, toastError } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-  import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
-  import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
-  import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
+    import PostEmbed from "./PostEmbed.svelte";
 
   let { data }: { data: FeedViewPost } = $props();
   const user = $page.data.user;
   const bookmarks = $page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
 </script>
-
-{#snippet quotedPost(record: ViewRecord | GeneratorView)}
-  <article class="flex flex-col gap-2 border px-4 py-2 rounded">
-    <a href={`/p/${(record.author as ProfileViewBasic).handle ?? (record.creator as ProfileView).handle}`} class="text-sm hover:underline flex gap-2 items-start">
-      <img 
-        src={(record.author as ProfileViewBasic).avatar ?? (record.creator as ProfileView).avatar} 
-        alt={`${(record.author as ProfileViewBasic).handle ?? (record.creator as ProfileView).handle} profile picture`} 
-        class="size-8 rounded"
-      />
-      <div class="flex flex-col">
-        <p class="flex gap-1 items-center">
-          {(record.author as ProfileViewBasic).displayName ?? (record.creator as ProfileView).displayName} 
-          <span class="text-xs">@{(record.author as ProfileViewBasic).handle ?? (record.creator as ProfileView).handle}</span>
-        </p>
-        <time class="text-xs font-light">
-          {formatDistanceToNowStrict(new Date(record.indexedAt))} ago
-        </time>
-      </div>
-    </a>
-
-    <p class="text-sm text-white prose prose-invert prose-p:text-white prose-sm prose-pink">
-      {@html
-        // @ts-ignore
-        record.value?.text || ""
-      }
-    </p>
-  </article>
-{/snippet}
 
 <article class={`flex flex-col gap-4 border p-4 hover:bg-white/[0.025] transition-all duration-150 ${data.reason && "border-dashed"}`} data-sveltekit-reload>
   <div class="flex items-center justify-between w-full">
@@ -124,33 +93,9 @@
       data.html 
     }
   </p>
-  
+
   {#if data.post.embed}
-    {#if data.post.embed.$type === "app.bsky.embed.images#view"}
-      {#each (data.post.embed.images as {fullsize: string, alt: string}[]) as image}
-        <img src={image.fullsize} alt={image.alt} />
-      {/each}
-    {:else if data.post.embed.$type === "app.bsky.embed.external#view"}
-      <img src={data.post.embed.external!.uri} alt={data.post.embed.external!.description} />
-    {:else if data.post.embed.$type === "app.bsky.embed.record#view" && !(data.post.embed.record!.$type === "app.bsky.graph.defs#starterPackViewBasic")}
-      {@render quotedPost(data.post.embed.record as ViewRecord)}
-    {:else}
-      <div class="flex gap-2 justify-between text-xs border px-4 py-2 rounded items-center">
-        <div class="flex gap-2 items-center">
-          <Icon icon="bx:error-alt" />
-          <p>This post has an unsupported embed</p>
-        </div>
-        <button 
-          onclick={() => {
-            posthog.capture("reported unsupported embed", { type: data.post.embed!.$type });
-            toastSuccess("Unsupported embed reported!");
-          }}
-          class="self-end px-2 py-1 border rounded"
-        >
-            Report
-        </button>
-      </div>
-    {/if}
+    <PostEmbed embed={data.post.embed} />
   {/if}
 
   <menu class="grid grid-cols-4 justify-items-end">
