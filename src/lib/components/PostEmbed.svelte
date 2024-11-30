@@ -9,12 +9,8 @@
     AppBskyEmbedRecordWithMedia, 
     AppBskyEmbedVideo, 
     AppBskyFeedDefs,
-    AppBskyFeedPost,
     AppBskyGraphDefs,
     AtUri,
-
-    ListitemRecord
-
   } from "@atproto/api";
   import type { ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
   import type { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
