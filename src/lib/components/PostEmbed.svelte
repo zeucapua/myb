@@ -56,7 +56,20 @@
     <!-- Feed -->
     {#if AppBskyFeedDefs.isGeneratorView(embed.record)}
       <!-- TODO: link to Feed page /p/<handle>/f/<record_id> -->
-      <p>Feed</p> 
+      <div class="border rounded flex p-3 gap-4">
+        {#if embed.record.avatar}
+          <img src={embed.record.avatar} class="size-8" alt={`${embed.record.displayName} list`} />
+        {:else}
+          <Icon icon="hugeicons:satellite-03" class="size-12 p-2 bg-blue-500 rounded"/>
+        {/if}
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-col">
+            <h1 class="font-bold">{embed.record.displayName}</h1>
+            <h2 class="text-sm font-medium">by @{embed.record.creator.handle}</h2>
+          </div>
+          <p class="text-xs">{embed.record.description}</p>
+        </div>
+      </div>
 
     <!-- List -->
     {:else if AppBskyGraphDefs.isListView(embed.record)}
@@ -66,18 +79,18 @@
     <!-- Starter Pack -->
     {:else if AppBskyGraphDefs.isStarterPackViewBasic(embed.record)}
       <!-- TODO: link to Starter Pack page /p/<handle>/sp/<record_id> -->
-      <div class="border rounded p-3 flex flex-col gap-2">
+      <div class="border rounded flex flex-col gap-2">
         <img 
           src={getStarterPackOgCard(embed.record)} 
           alt={`${embed.record.record.name} starter pack OG image`} 
           class="rounded shadow-md shadow-slate-900"
         />
 
-        <div class="flex flex-col">
+        <div class="flex flex-col p-3">
           <h1 class="font-bold">{embed.record.record.name}</h1>
           <h2 class="text-sm font-medium">by @{embed.record.creator.handle}</h2>
+          <p class="text-xs">{embed.record.record.description}</p>
         </div>
-        <p class="text-xs">{embed.record.record.description}</p>
       </div>
     {:else}
       {@render quotePost(embed.record as ViewRecord)}

@@ -1,7 +1,6 @@
 import { renderTextToMarkdownToHTML } from "$lib/utils";
 import { Agent, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs, AppBskyGraphDefs, AtpBaseClient } from "@atproto/api";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
-import { render } from "svelte/server";
 
 // Given a actor DID, cursor and limit (opt)
 // Return a JSON of FeedViewPost
