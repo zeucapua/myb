@@ -7,7 +7,7 @@
   import { formatDistanceToNowStrict } from "date-fns";
   import { toastComingSoon, toastError } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-    import PostEmbed from "./PostEmbed.svelte";
+  import PostEmbed from "./PostEmbed.svelte";
 
   let { data }: { data: FeedViewPost } = $props();
   const user = $page.data.user;

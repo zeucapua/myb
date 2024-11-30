@@ -1,13 +1,19 @@
 <script lang="ts">
+  import PostEmbed from "./PostEmbed.svelte";
+  import Icon from "@iconify/svelte";
   import { 
     AppBskyEmbedExternal, 
     AppBskyEmbedImages, 
     AppBskyEmbedRecord, 
     AppBskyEmbedRecordWithMedia, 
     AppBskyEmbedVideo, 
-    AppBskyFeedDefs
+    AppBskyFeedDefs,
+    AppBskyGraphDefs,
+    AtUri
   } from "@atproto/api";
-    import Icon from "@iconify/svelte";
+  import type { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
+  import { formatDistanceToNowStrict } from "date-fns";
+  import type { ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
 
   type Embed =
   | AppBskyEmbedRecord.View
@@ -17,7 +23,20 @@
   | AppBskyEmbedRecordWithMedia.View
   | {$type: string; [k: string]: unknown}
 
-  let { embed }: { embed: Embed } = $props();
+  let { embed, disableQuotes = false }: { embed: Embed, disableQuotes?: boolean } = $props();
+
+  function getStarterPackOgCard(
+      didOrStarterPack: AppBskyGraphDefs.StarterPackView | string,
+      rkey?: string,
+  ) {
+    if (typeof didOrStarterPack === 'string') {
+      return `https://ogcard.cdn.bsky.app/start/${didOrStarterPack}/${rkey}`
+    } 
+    else {
+      const rkey = new AtUri(didOrStarterPack.uri).rkey
+      return `https://ogcard.cdn.bsky.app/start/${didOrStarterPack.creator.did}/${rkey}`
+    }
+  }
 </script>
 
 <!-- Images -->
@@ -25,9 +44,84 @@
   {#each (embed.images) as image}
     <img src={image.fullsize} alt={image.alt} />
   {/each}
+
+{:else if !disableQuotes}
+  <!-- Quote Post with Embeds -->
+  {#if AppBskyEmbedRecordWithMedia.isView(embed)}
+    <PostEmbed embed={embed.media} /> <!-- Author embeds -->
+    {@render quotePost(embed.record.record as ViewRecord)}
+    
+  <!-- Bsky Record (quote, starter pack, list) -->
+  {:else if AppBskyEmbedRecord.isView(embed)}
+    <!-- Feed -->
+    {#if AppBskyFeedDefs.isGeneratorView(embed.record)}
+      <!-- TODO: link to Feed page /p/<handle>/f/<record_id> -->
+      <p>Feed</p> 
+
+    <!-- List -->
+    {:else if AppBskyGraphDefs.isListView(embed.record)}
+      <!-- TODO: link to List page /p/<handle>/l/<record_id> -->
+      <p>List</p>
+
+    <!-- Starter Pack -->
+    {:else if AppBskyGraphDefs.isStarterPackViewBasic(embed.record)}
+      <!-- TODO: link to Starter Pack page /p/<handle>/sp/<record_id> -->
+      <div class="border rounded p-3 flex flex-col gap-2">
+        <img 
+          src={getStarterPackOgCard(embed.record)} 
+          alt={`${embed.record.record.name} starter pack OG image`} 
+          class="rounded shadow-md shadow-slate-900"
+        />
+
+        <div class="flex flex-col">
+          <h1 class="font-bold">{embed.record.record.name}</h1>
+          <h2 class="text-sm font-medium">by @{embed.record.creator.handle}</h2>
+        </div>
+        <p class="text-xs">{embed.record.record.description}</p>
+      </div>
+    {:else}
+      {@render quotePost(embed.record as ViewRecord)}
+    {/if}
+  {/if}
+
 {:else}
   <div class="text-xs border rounded px-3 py-2 flex items-center gap-2">
     <Icon icon="material-symbols:info-outline" class="text-lg" />
     <p>This embed is not supported yet.</p>
+    <code>{embed.$type}</code> 
   </div>
 {/if}
+
+
+{#snippet quotePost(record: ViewRecord)}
+  <article class="border p-3 rounded flex flex-col gap-4">
+    <div class="flex items-center justify-between w-full">
+      <a href={`/p/${(record.author as ProfileViewBasic).handle}`} class="text-sm hover:underline flex gap-2 items-center">
+        <img 
+          src={(record.author as ProfileViewBasic).avatar} 
+          alt={`${(record.author as ProfileViewBasic).handle} profile picture`} 
+          class="size-8 rounded"
+        />
+        <div class="flex flex-col">
+          <p class="flex gap-1 items-center">
+            {(record.author as ProfileViewBasic).displayName} 
+            <span class="text-xs">@{(record.author as ProfileViewBasic).handle}</span>
+          </p>
+          <time class="text-xs font-light">
+            {formatDistanceToNowStrict(new Date(record.indexedAt as string))} ago
+          </time>
+        </div>
+      </a>
+    </div>
+
+    <div class="prose prose-invert prose-pink text-xs text-white">
+      {@html record.html}
+    </div>
+    
+    {#if record.embeds}
+      {#each record.embeds as embed}
+        <PostEmbed {embed} disableQuotes />
+      {/each}
+    {/if}
+  </article>
+{/snippet}
