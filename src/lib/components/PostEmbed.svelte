@@ -58,7 +58,7 @@
       <!-- TODO: link to Feed page /p/<handle>/f/<record_id> -->
       <div class="border rounded flex p-3 gap-4">
         {#if embed.record.avatar}
-          <img src={embed.record.avatar} class="size-8" alt={`${embed.record.displayName} list`} />
+          <img src={embed.record.avatar} class="size-8" alt={`${embed.record.displayName} feed`} />
         {:else}
           <Icon icon="hugeicons:satellite-03" class="size-12 p-2 bg-blue-500 rounded"/>
         {/if}
