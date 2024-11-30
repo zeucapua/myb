@@ -1,6 +1,7 @@
 <script lang="ts">
-  import PostEmbed from "./PostEmbed.svelte";
   import Icon from "@iconify/svelte";
+  import PostEmbed from "./PostEmbed.svelte";
+  import { formatDistanceToNowStrict } from "date-fns";
   import { 
     AppBskyEmbedExternal, 
     AppBskyEmbedImages, 
@@ -11,9 +12,8 @@
     AppBskyGraphDefs,
     AtUri
   } from "@atproto/api";
-  import type { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-  import { formatDistanceToNowStrict } from "date-fns";
   import type { ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
+  import type { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 
   type Embed =
   | AppBskyEmbedRecord.View
@@ -44,6 +44,22 @@
   {#each (embed.images) as image}
     <img src={image.fullsize} alt={image.alt} />
   {/each}
+
+<!-- External links -->
+{:else if AppBskyEmbedExternal.isView(embed)}
+  <a href={embed.external.uri} target="_blank">
+    {#if AppBskyEmbedExternal.validateView(embed).success}
+      <img src={embed.external.uri} alt={embed.external.description} />
+    {:else}
+      <div class="flex flex-col rounded border">
+        <img src={embed.external.thumb} alt={embed.external.description} class="w-full h-full max-h-56 object-cover" />
+        <div class="p-3 flex flex-col gap-2">
+          <h1 class="font-medium">{embed.external.title || embed.external.uri}</h1>
+          <p>{embed.external.description}</p>
+        </div>
+      </div>
+    {/if}
+  </a>
 
 {:else if !disableQuotes}
   <!-- Quote Post with Embeds -->
@@ -97,6 +113,7 @@
     {/if}
   {/if}
 
+<!-- Unsupported Embed -->
 {:else}
   <div class="text-xs border rounded px-3 py-2 flex items-center gap-2">
     <Icon icon="material-symbols:info-outline" class="text-lg" />
