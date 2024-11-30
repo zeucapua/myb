@@ -9,8 +9,12 @@
     AppBskyEmbedRecordWithMedia, 
     AppBskyEmbedVideo, 
     AppBskyFeedDefs,
+    AppBskyFeedPost,
     AppBskyGraphDefs,
-    AtUri
+    AtUri,
+
+    ListitemRecord
+
   } from "@atproto/api";
   import type { ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
   import type { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
@@ -48,7 +52,7 @@
 <!-- External links -->
 {:else if AppBskyEmbedExternal.isView(embed)}
   <a href={embed.external.uri} target="_blank">
-    {#if AppBskyEmbedExternal.validateView(embed).success}
+    {#if embed.external.uri.includes("media.tenor.com") || embed.external.uri.includes("i.giphy.com")}
       <img src={embed.external.uri} alt={embed.external.description} />
     {:else}
       <div class="flex flex-col rounded border">
@@ -90,7 +94,24 @@
     <!-- List -->
     {:else if AppBskyGraphDefs.isListView(embed.record)}
       <!-- TODO: link to List page /p/<handle>/l/<record_id> -->
-      <p>List</p>
+      <div class="border rounded flex p-3 gap-4">
+        {#if embed.record.avatar}
+          <img src={embed.record.avatar} class="size-8" alt={`${embed.record.displayName} feed`} />
+        {:else}
+          <Icon icon="hugeicons:satellite-03" class="size-12 p-2 bg-blue-500 rounded"/>
+        {/if}
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-col">
+            <h1 class="font-bold">{embed.record.name}</h1>
+            <h2 class="text-sm font-medium">by @{embed.record.creator.handle}</h2>
+          </div>
+          <p class="text-xs">{embed.record.description}</p>
+          <div class="flex items-center text-sm gap-2">
+            <Icon icon="bi:people-fill" /> 
+            <p>{embed.record.listItemCount} {embed.record.listItemCount === 1 ? "person" : "people"}</p>
+          </div>
+        </div>
+      </div>
 
     <!-- Starter Pack -->
     {:else if AppBskyGraphDefs.isStarterPackViewBasic(embed.record)}
@@ -111,15 +132,14 @@
     {:else}
       {@render quotePost(embed.record as ViewRecord)}
     {/if}
+  {:else}
+    <!-- Unsupported Embed -->
+    <div class="text-xs border rounded px-3 py-2 flex items-center gap-2">
+      <Icon icon="material-symbols:info-outline" class="text-lg" />
+      <p>This embed is not supported yet.</p>
+      <code>{embed.$type}</code> 
+    </div>
   {/if}
-
-<!-- Unsupported Embed -->
-{:else}
-  <div class="text-xs border rounded px-3 py-2 flex items-center gap-2">
-    <Icon icon="material-symbols:info-outline" class="text-lg" />
-    <p>This embed is not supported yet.</p>
-    <code>{embed.$type}</code> 
-  </div>
 {/if}
 
 
