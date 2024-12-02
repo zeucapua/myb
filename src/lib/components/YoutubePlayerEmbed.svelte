@@ -6,6 +6,6 @@
   const uri = new URL(embed.external.uri);
 </script>
 
-<media-player title={embed.external.title} src={`youtube/${uri.pathname.substring(1,)}`} controls autoPlay muted>
+<media-player title={embed.external.title} src={`youtube/${uri.pathname.substring(1,)}`} controls>
   <media-provider></media-provider>
 </media-player>
