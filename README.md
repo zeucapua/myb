@@ -21,6 +21,7 @@ please send a GitHub issue my way!
   - [x] Skeets Stats Page
 - [ ] Posts
   - [x] Render posts' facets
+  - [x] Embeds
   - [x] Draft posts
   - [x] Bookmark posts
   - [ ] Like/Unlike
