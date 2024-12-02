@@ -15,6 +15,7 @@
   } from "@atproto/api";
   import type { ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
   import type { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
+    import YoutubePlayerEmbed from "./YoutubePlayerEmbed.svelte";
 
   type Embed =
   | AppBskyEmbedRecord.View
@@ -38,6 +39,8 @@
       return `https://ogcard.cdn.bsky.app/start/${didOrStarterPack.creator.did}/${rkey}`
     }
   }
+
+  console.log({ embed });
 </script>
 
 <!-- Images -->
@@ -51,9 +54,11 @@
   <a href={embed.external.uri} target="_blank">
     {#if embed.external.uri.includes("media.tenor.com") || embed.external.uri.includes("i.giphy.com")}
       <img src={embed.external.uri} alt={embed.external.description} />
+    {:else if embed.external.uri.includes("youtu.be")}
+      <YoutubePlayerEmbed {embed} /> 
     {:else}
       <div class="flex flex-col rounded border">
-        <img src={embed.external.thumb} alt={embed.external.description} class="w-full h-full max-h-56 object-cover" />
+        <img src={embed.external.thumb} alt={embed.external.description} class="w-full h-full aspect-[1.91/1] object-cover" />
         <div class="p-3 flex flex-col gap-2">
           <h1 class="font-medium">{embed.external.title || embed.external.uri}</h1>
           <p>{embed.external.description}</p>
