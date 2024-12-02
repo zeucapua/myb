@@ -1,6 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import PostEmbed from "./PostEmbed.svelte";
+  import HlsPlayerEmbed from "./HlsPlayerEmbed.svelte";
   import { formatDistanceToNowStrict } from "date-fns";
   import { 
     AppBskyEmbedExternal, 
@@ -60,6 +61,10 @@
       </div>
     {/if}
   </a>
+
+<!-- Video -->
+{:else if AppBskyEmbedVideo.isView(embed)}
+  <HlsPlayerEmbed {embed} />
 
 {:else if !disableQuotes}
   <!-- Quote Post with Embeds -->
