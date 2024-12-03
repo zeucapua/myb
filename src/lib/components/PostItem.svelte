@@ -7,32 +7,41 @@
   import { formatDistanceToNowStrict } from "date-fns";
   import { toastComingSoon, toastError } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-  import PostEmbed from "./PostEmbed.svelte";
+  import PostEmbed from "./viewEmbed/PostEmbed.svelte";
 
   let { data }: { data: FeedViewPost } = $props();
   const user = $page.data.user;
   const bookmarks = $page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
+  const record_id = data.post.uri.split("/").at(data.post.uri.split("/").length - 1);
 </script>
 
 <article class={`flex flex-col gap-4 border p-4 hover:bg-white/[0.025] transition-all duration-150 ${data.reason && "border-dashed"}`} data-sveltekit-reload>
-  <div class="flex items-center justify-between w-full">
-    <a href={`/p/${data.post.author.handle}`} class="text-sm hover:underline flex gap-2 items-center">
-      <img 
-        src={data.post.author.avatar} 
-        alt={`${data.post.author.handle} profile picture`} 
-        class="size-8 rounded"
-      />
+  <section class="flex items-center justify-between w-full">
+    <div class="text-sm flex gap-2 items-center">
+      <a href={`/p/${data.post.author.handle}`}>
+        <img 
+          src={data.post.author.avatar} 
+          alt={`${data.post.author.handle} profile picture`} 
+          class="size-8 rounded"
+        />
+      </a>
       <div class="flex flex-col">
-        <p class="flex gap-1 items-center">
-          {data.post.author.displayName} 
-          <span class="text-xs">@{data.post.author.handle}</span>
-        </p>
+        <a href={`/p/${data.post.author.handle}`}>
+          <p class="flex gap-1 items-center">
+            {data.post.author.displayName} 
+            <span class="text-xs">@{data.post.author.handle}</span>
+          </p>
+        </a>
         <time class="text-xs font-light">
           {formatDistanceToNowStrict(new Date(data.post.indexedAt))} ago
         </time>
       </div>
-    </a>
+
+      <a href={`/p/${data.post.author.handle}/${record_id}`}>
+        <Icon icon="solar:arrow-right-linear" />
+      </a>
+    </div>
 
     <div class="flex gap-2 items-center">
       {#if data.reason}
@@ -66,7 +75,7 @@
         </Tooltip.Root>
       {/if}
     </div>
-  </div>
+  </section>
     
   {#if data.reply}
     <div class="flex gap-2 items-center text-sm font-light">

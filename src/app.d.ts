@@ -16,7 +16,25 @@ declare global {
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
+    
 	}
+
+  type ViewEmbed =
+    | AppBskyEmbedRecord.View
+    | AppBskyEmbedImages.View
+    | AppBskyEmbedVideo.View
+    | AppBskyEmbedExternal.View
+    | AppBskyEmbedRecordWithMedia.View
+    | {$type: string; [k: string]: unknown}
+
+  type MainEmbed =
+    | AppBskyEmbedRecord.Main
+    | AppBskyEmbedImages.Main
+    | AppBskyEmbedVideo.Main
+    | AppBskyEmbedExternal.Main
+    | AppBskyEmbedRecordWithMedia.Main
+    | {$type: string; [k: string]: unknown}
 }
+
 
 export {};

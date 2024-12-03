@@ -1,7 +1,9 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import PostEmbed from "./PostEmbed.svelte";
-  import HlsPlayerEmbed from "./HlsPlayerEmbed.svelte";
+  import VideoEmbed from "./VideoEmbed.svelte";
+  import PostEmbed from "../viewEmbed/PostEmbed.svelte";
+  import YoutubePlayerEmbed from "./YoutubePlayerEmbed.svelte";
+
   import { formatDistanceToNowStrict } from "date-fns";
   import { 
     AppBskyEmbedExternal, 
@@ -15,17 +17,8 @@
   } from "@atproto/api";
   import type { ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
   import type { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-    import YoutubePlayerEmbed from "./YoutubePlayerEmbed.svelte";
 
-  type Embed =
-  | AppBskyEmbedRecord.View
-  | AppBskyEmbedImages.View
-  | AppBskyEmbedVideo.View
-  | AppBskyEmbedExternal.View
-  | AppBskyEmbedRecordWithMedia.View
-  | {$type: string; [k: string]: unknown}
-
-  let { embed, disableQuotes = false }: { embed: Embed, disableQuotes?: boolean } = $props();
+  let { embed, author_did, disableQuotes = false }: { embed: MainEmbed, author_did: string, disableQuotes?: boolean } = $props();
 
   function getStarterPackOgCard(
       didOrStarterPack: AppBskyGraphDefs.StarterPackView | string,
@@ -39,18 +32,16 @@
       return `https://ogcard.cdn.bsky.app/start/${didOrStarterPack.creator.did}/${rkey}`
     }
   }
-
-  console.log({ embed });
 </script>
 
 <!-- Images -->
-{#if AppBskyEmbedImages.isView(embed)} 
+{#if AppBskyEmbedImages.isMain(embed)} 
   {#each (embed.images) as image}
     <img src={image.fullsize} alt={image.alt} />
   {/each}
 
 <!-- External links -->
-{:else if AppBskyEmbedExternal.isView(embed)}
+{:else if AppBskyEmbedExternal.isMain(embed)}
   <a href={embed.external.uri} target="_blank">
     {#if embed.external.uri.includes("media.tenor.com") || embed.external.uri.includes("i.giphy.com")}
       <img src={embed.external.uri} alt={embed.external.description} />
@@ -68,17 +59,17 @@
   </a>
 
 <!-- Video -->
-{:else if AppBskyEmbedVideo.isView(embed)}
-  <HlsPlayerEmbed {embed} />
+{:else if AppBskyEmbedVideo.isMain(embed)}
+  <VideoEmbed {embed} {author_did} />
 
 {:else if !disableQuotes}
   <!-- Quote Post with Embeds -->
-  {#if AppBskyEmbedRecordWithMedia.isView(embed)}
+  {#if AppBskyEmbedRecordWithMedia.isMain(embed)}
     <PostEmbed embed={embed.media} /> <!-- Author embeds -->
     {@render quotePost(embed.record.record as ViewRecord)}
     
   <!-- Bsky Record (quote, starter pack, list) -->
-  {:else if AppBskyEmbedRecord.isView(embed)}
+  {:else if AppBskyEmbedRecord.isMain(embed)}
     <!-- Feed -->
     {#if AppBskyFeedDefs.isGeneratorView(embed.record)}
       <!-- TODO: link to Feed page /p/<handle>/f/<record_id> -->
