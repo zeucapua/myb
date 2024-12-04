@@ -13,15 +13,15 @@
   import { goto } from "$app/navigation";
   import PostEmbed from "./PostEmbed.svelte";
 
-  let { data }: { data: FeedViewPost } = $props();
+  let { data, isBordered = true }: { data: FeedViewPost, isBordered?: boolean } = $props();
   const user = $page.data.user;
   const bookmarks = $page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
   const record_id = data.post.uri.split("/").at(data.post.uri.split("/").length - 1);
 </script>
 
-<article class={`flex flex-col gap-4 border p-4 hover:bg-white/[0.025] transition-all duration-150 ${data.reason && "border-dashed"}`} data-sveltekit-reload>
-  <div class="flex items-center justify-between w-full">
+<article class={`flex flex-col gap-4 p-4 hover:bg-white/[0.025] transition-all duration-150 ${isBordered && "border"} ${data.reason && "border-dashed"}`} data-sveltekit-reload>
+  <section class="flex items-center justify-between w-full">
     <div class="text-sm flex gap-2 items-center">
       <a href={`/p/${data.post.author.handle}`} >
         <img 
