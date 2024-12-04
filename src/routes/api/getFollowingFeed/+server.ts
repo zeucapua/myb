@@ -1,6 +1,6 @@
 import { renderTextToMarkdownToHTML } from "$lib/utils";
-import { AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs, AppBskyGraphDefs, AtpBaseClient } from "@atproto/api";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
+import { AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs, AppBskyGraphDefs, AtpBaseClient } from "@atproto/api";
 
 // Given a cursor and limit (opt)
 // Return a JSON of FeedViewPost
@@ -19,6 +19,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   for (const post of data.feed) {
     // @ts-ignore
     post.html = await renderTextToMarkdownToHTML(post.post.record.text, locals.agent);
+
     if (post.post.embed && AppBskyEmbedRecord.isView(post.post.embed) && !(
       AppBskyGraphDefs.isListView(post.post.embed)
       && AppBskyGraphDefs.isStarterPackViewBasic(post.post.embed)
