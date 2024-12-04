@@ -43,7 +43,7 @@
 {/snippet}
 
 
-<ol class="flex flex-col">
+<ol class="flex flex-col divide-y divide-slate-700">
   {#each feed as post: FeedPost}
     {#if !(post.reason && !showReposts) && !(post.reply && !showReplies)}
       <li>

@@ -2,13 +2,15 @@
   import { formatDistanceToNowStrict } from 'date-fns';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs.js';
   import { createQuery } from '@tanstack/svelte-query';
-  import type { FeedViewPost, ThreadViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
+  import type { FeedViewPost, isFeedViewPost, ThreadViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
   import PostItem from '$lib/components/PostItem.svelte';
   import PostEmbed from '$lib/components/PostEmbed.svelte';
   import { toastComingSoon, toastError } from '$lib/utils';
   import Icon from '@iconify/svelte';
   import { applyAction, enhance } from '$app/forms';
   import { page } from '$app/stores';
+    import FeedTimeline from '$lib/components/FeedTimeline.svelte';
+    import Avatar from 'svelte-boring-avatars';
 
   type Props = {
     data: {
@@ -44,17 +46,21 @@
   <p>Loading...</p>
 {:else if $threadQuery.isSuccess}
   {#if $threadQuery.data.thread.parent}
-    <PostItem isBordered={false} data={$threadQuery.data.thread.parent as FeedViewPost} />
+    <PostItem data={$threadQuery.data.thread.parent as FeedViewPost} />
   {/if}
   
-  <article id="selected_post" class="flex flex-col gap-8">
+  <article id="selected_post" class="flex flex-col gap-8 p-4 border">
     <div class="text-sm flex gap-2 items-center">
       <a href={`/p/${author.handle}`}>
-        <img 
-          src={author.avatar} 
-          alt={`${author.handle} profile picture`} 
-          class="size-8 rounded"
-        />
+        {#if author.avatar}
+          <img 
+            src={author.avatar} 
+            alt={`${author.handle} profile picture`} 
+            class="size-8 rounded"
+          />
+        {:else}
+          <Avatar name={author.displayName} variant="bauhaus" />
+        {/if}
       </a>
       <div class="flex flex-col">
         <a href={`/p/${author.handle}`}>
@@ -134,11 +140,7 @@
   {#if $threadQuery.data.thread.replies && $threadQuery.data.thread.replies.length > 0}
     <section class="flex flex-col gap-4 border-t-2 py-4">
       <h2 class="text-lg font-medium">Replies</h2>
-        <div class="flex flex-col">
-          {#each $threadQuery.data.thread.replies as reply}
-            <PostItem isBordered={false} data={reply as FeedViewPost} />
-          {/each}
-        </div>
+      <FeedTimeline feed={$threadQuery.data.thread.replies as FeedViewPost[]} />
     </section>
   {/if}
 

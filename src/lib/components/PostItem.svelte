@@ -2,14 +2,15 @@
   import { Tooltip } from "bits-ui";
   import Icon from "@iconify/svelte";
   import { page } from "$app/stores";
-  import { applyAction, enhance } from "$app/forms";
+  import Avatar from "svelte-boring-avatars";
   import { fade } from "svelte/transition";
+  import PostEmbed from "./PostEmbed.svelte";
+  import { applyAction, enhance } from "$app/forms";
   import { formatDistanceToNowStrict } from "date-fns";
   import { toastComingSoon, toastError } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-  import PostEmbed from "./PostEmbed.svelte";
 
-  let { data, isBordered = true }: { data: FeedViewPost, isBordered?: boolean } = $props();
+  let { data, isBordered = false }: { data: FeedViewPost, isBordered?: boolean } = $props();
   const user = $page.data.user;
   const bookmarks = $page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
@@ -20,11 +21,15 @@
   <section class="flex items-center justify-between w-full">
     <div class="text-sm flex gap-2 items-center">
       <a href={`/p/${data.post.author.handle}`} >
-        <img 
-          src={data.post.author.avatar} 
-          alt={`${data.post.author.handle} profile picture`} 
-          class="size-8 rounded"
-        />
+        {#if data.post.author.avatar}
+          <img 
+            src={data.post.author.avatar} 
+            alt={`${data.post.author.handle} profile picture`} 
+            class="size-8 rounded"
+          />
+        {:else}
+          <Avatar name={data.post.author.displayName} variant="bauhaus" />
+        {/if}
       </a>
       <div class="flex flex-col hover:underline ">
         <a href={`/p/${data.post.author.handle}`} >
@@ -37,7 +42,7 @@
           {formatDistanceToNowStrict(new Date(data.post.indexedAt))} ago
         </time>
       </div>
-      <a href={`/p/${data.post.author.handle}/${record_id}`}>
+      <a href={`/p/${data.post.author.handle}/${record_id}#selected_post`}>
         <Icon icon="ep:right" />
       </a>
     </div>
