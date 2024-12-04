@@ -7,10 +7,6 @@
   import { formatDistanceToNowStrict } from "date-fns";
   import { toastComingSoon, toastError } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-  import type { ViewRecord } from "@atproto/api/src/client/types/app/bsky/embed/record";
-  import type { GeneratorView } from "@atproto/api/src/client/types/app/bsky/feed/defs";
-  import type { ProfileView, ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-  import { goto } from "$app/navigation";
   import PostEmbed from "./PostEmbed.svelte";
 
   let { data, isBordered = true }: { data: FeedViewPost, isBordered?: boolean } = $props();
@@ -78,7 +74,7 @@
         </Tooltip.Root>
       {/if}
     </div>
-  </div>
+  </section>
     
   {#if data.reply}
     <div class="flex gap-2 items-center text-sm font-light">

@@ -4,7 +4,7 @@
   import { createQuery } from '@tanstack/svelte-query';
   import type { FeedViewPost, ThreadViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
   import PostItem from '$lib/components/PostItem.svelte';
-  import PostEmbed from '$lib/components/viewEmbed/PostEmbed.svelte';
+  import PostEmbed from '$lib/components/PostEmbed.svelte';
   import { toastComingSoon, toastError } from '$lib/utils';
   import Icon from '@iconify/svelte';
   import { applyAction, enhance } from '$app/forms';
