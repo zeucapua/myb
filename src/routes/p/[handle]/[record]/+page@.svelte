@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs.js';
+  import MainEmbed from '$lib/components/mainEmbed/MainEmbed.svelte';
+import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs.js';
   import type { Record } from '@atproto/api/dist/client/types/app/bsky/feed/post';
   import { formatDistanceToNowStrict } from 'date-fns';
 
@@ -40,4 +41,8 @@
   <div class="prose prose-invert text-white prose-pink text-lg">
     {@html post.html}
   </div>
+
+  {#if post.embed}
+    <MainEmbed embed={post.embed} author_did={author.did} />
+  {/if}
 </article>
