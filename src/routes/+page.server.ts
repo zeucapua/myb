@@ -78,19 +78,22 @@ export const actions: Actions = {
       return fail(500);
     }
   },
-  "likePost": async ({ request, locals }) => {
+  "toggleLikePost": async ({ request, locals }) => {
     const formData = await request.formData();
+    const likeUri = formData.get("like_uri") as string;
     const cid = formData.get("post_cid") as string;
     const uri = formData.get("post_uri") as string;
 
     const agent = locals.agent;
-    if (agent instanceof AtpBaseClient) {
-      return fail(401); 
-    }
-
     if (agent instanceof Agent) {
-      await agent.like(uri, cid);
-      return { success: true }
+      if (!likeUri) {
+        const { uri: newLikeUri } = await agent.like(uri, cid);
+        return { message: "liked", uri, likeUri: newLikeUri }
+      }
+      else {
+        await agent.deleteLike(likeUri); 
+        return { message: "unliked", uri, likeUri: "" }
+      }
     }
   },
   "bookmarkPost": async ({ request, locals }) => {

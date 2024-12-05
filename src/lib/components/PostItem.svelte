@@ -13,6 +13,8 @@
   let { data, isBordered = false }: { data: FeedViewPost, isBordered?: boolean } = $props();
   const user = $page.data.user;
   const bookmarks = $page.data.bookmarks as Set<string>; 
+  let likes = $state(data.post.likeCount ?? 0);
+  let likeUri = $state(data.post.viewer?.like ?? undefined);
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
   const record_id = data.post.uri.split("/").at(data.post.uri.split("/").length - 1);
 </script>
@@ -157,9 +159,36 @@
       <Icon icon="bx:repost" class="size-6" />
       {data.post.quoteCount}
     </button>
-    <button type="submit" class="flex gap-1">
-      <Icon icon="prime:heart" class="size-6" />
-      {data.post.likeCount}
-    </button>
+    {#if !user}
+      <button onclick={() => toastError("Must be logged in to like")} class="flex gap-1">
+        <Icon icon="prime:heart" class="size-6" />
+        {data.post.likeCount}
+      </button>
+    {:else}
+      <form 
+        method="POST" 
+        action="/?/toggleLikePost" 
+        use:enhance={() => {
+            return async ({ result }) => {
+              // @ts-ignore
+              if (result.data.uri === data.post.uri) {
+                // @ts-ignore
+                likeUri = result.data.likeUri;
+                if (likeUri) { likes++; }
+                else { likes--; }
+              }
+              await applyAction(result);
+            }
+        }}
+      >
+        <input name="like_uri" type="hidden" value={likeUri} />
+        <input name="post_uri" type="hidden" value={data.post.uri} />
+        <input name="post_cid" type="hidden" value={data.post.cid} />
+        <button type="submit" class="flex gap-1">
+          <Icon icon={likeUri ? "prime:heart-fill" : "prime:heart"} class="size-6" />
+          {likes}
+        </button>
+      </form>
+    {/if}
   </menu>
 </article>
