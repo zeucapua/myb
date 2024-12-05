@@ -1,18 +1,30 @@
-import { AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs, AppBskyGraphDefs, AtpBaseClient } from "@atproto/api";
+import { Agent, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs, AppBskyGraphDefs, AtpBaseClient } from "@atproto/api";
 import { renderTextToMarkdownToHTML } from "$lib/utils";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 import { validateThreadViewPost, type ThreadViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
   const queryParams = url.searchParams;
   const uri = queryParams.get("uri");
   if (!uri) {
     error(500, "No record URI given");
   }
-  const agent = new AtpBaseClient({ service: "https://api.bsky.app" });
 
-  const response = await agent.app.bsky.feed.getPostThread({ uri, depth: 1 });
-  const { thread } = response.data as { thread: ThreadViewPost };
+  let agent = locals.agent;
+  let thread;
+  if (agent instanceof Agent) {
+    const response = await agent.getPostThread({ uri, depth: 1 });
+    const data = response.data as { thread: ThreadViewPost };
+    thread = data.thread;
+  }
+  else { 
+    if (!agent) {
+      agent = new AtpBaseClient({ service: "https://api.bsky.app" });
+    }
+    const response = await agent.app.bsky.feed.getPostThread({ uri, depth: 1 });
+    const data = response.data as { thread: ThreadViewPost };
+    thread = data.thread;
+  }
 
   // @ts-ignore
   thread.post.html = await renderTextToMarkdownToHTML(thread.post.record.text, agent);
