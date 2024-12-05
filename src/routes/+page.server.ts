@@ -96,6 +96,24 @@ export const actions: Actions = {
       }
     }
   },
+  "toggleRepostPost": async ({ request, locals }) => {
+    const formData = await request.formData();
+    const repostUri = formData.get("repost_uri") as string;
+    const cid = formData.get("post_cid") as string;
+    const uri = formData.get("post_uri") as string;
+
+    const agent = locals.agent;
+    if (agent instanceof Agent) {
+      if (!repostUri) {
+        const { uri: newRepostUri } = await agent.repost(uri, cid);
+        return { message: "reposted", uri, repostUri: newRepostUri }
+      }
+      else {
+        await agent.deleteRepost(repostUri); 
+        return { message: "unrepost", uri, repostUri: "" }
+      }
+    }
+  },
   "bookmarkPost": async ({ request, locals }) => {
     if (!locals.user) {
       return fail(401); 

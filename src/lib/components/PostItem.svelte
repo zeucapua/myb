@@ -13,9 +13,14 @@
   let { data, isBordered = false }: { data: FeedViewPost, isBordered?: boolean } = $props();
   const user = $page.data.user;
   const bookmarks = $page.data.bookmarks as Set<string>; 
-  let likes = $state(data.post.likeCount ?? 0);
-  let likeUri = $state(data.post.viewer?.like ?? undefined);
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
+
+  let likes = $state(data.post.likeCount ?? 0);
+  let likeUri = $state(data.post.viewer?.like ?? "");
+
+  let reposts = $state(data.post.repostCount ?? 0);
+  let repostUri = $state(data.post.viewer?.repost ?? "");
+
   const record_id = data.post.uri.split("/").at(data.post.uri.split("/").length - 1);
 </script>
 
@@ -151,20 +156,52 @@
         </form>
       {/if}
     </div>
-    <button onclick={toastComingSoon} class="flex gap-1">
-      <Icon icon="iconamoon:comment" class="size-6" />
-      {data.post.replyCount}
-    </button>
-    <button onclick={toastComingSoon} class="flex gap-1">
-      <Icon icon="bx:repost" class="size-6" />
-      {data.post.quoteCount}
-    </button>
+
     {#if !user}
+      <button onclick={toastComingSoon} class="flex gap-1">
+        <Icon icon="iconamoon:comment" class="size-6" />
+        {data.post.replyCount}
+      </button>
+      <button onclick={toastComingSoon} class="flex gap-1">
+        <Icon icon="bx:repost" class="size-6" />
+        {reposts}
+      </button>
       <button onclick={() => toastError("Must be logged in to like")} class="flex gap-1">
         <Icon icon="prime:heart" class="size-6" />
-        {data.post.likeCount}
+        {likes}
       </button>
     {:else}
+      <button onclick={toastComingSoon} class="flex gap-1">
+        <Icon icon="iconamoon:comment" class="size-6" />
+        {data.post.replyCount}
+      </button>
+      <form 
+        method="POST" 
+        action="/?/toggleRepostPost" 
+        use:enhance={() => {
+            return async ({ result }) => {
+              // @ts-ignore
+              if (result.data.uri === data.post.uri) {
+                // @ts-ignore
+                repostUri = result.data.repostUri;
+                if (repostUri) { reposts++; }
+                else { reposts--; }
+              }
+              await applyAction(result);
+            }
+        }}
+      >
+        <input name="repost_uri" type="hidden" value={repostUri} />
+        <input name="post_uri" type="hidden" value={data.post.uri} />
+        <input name="post_cid" type="hidden" value={data.post.cid} />
+        <button type="submit" class="flex gap-1">
+          <Icon 
+            icon="bx:repost" 
+            class={`size-6 ${repostUri ? "text-green-500" : "text-white"}`} 
+          />
+          {reposts}
+        </button>
+      </form>
       <form 
         method="POST" 
         action="/?/toggleLikePost" 
@@ -185,7 +222,10 @@
         <input name="post_uri" type="hidden" value={data.post.uri} />
         <input name="post_cid" type="hidden" value={data.post.cid} />
         <button type="submit" class="flex gap-1">
-          <Icon icon={likeUri ? "prime:heart-fill" : "prime:heart"} class="size-6" />
+          <Icon 
+            icon={likeUri ? "prime:heart-fill" : "prime:heart"}
+            class={`size-6 ${likeUri ? "text-red-500" : "text-white"}`} 
+          />
           {likes}
         </button>
       </form>
