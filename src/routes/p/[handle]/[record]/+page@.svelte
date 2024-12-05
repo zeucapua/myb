@@ -9,8 +9,8 @@
   import Icon from '@iconify/svelte';
   import { applyAction, enhance } from '$app/forms';
   import { page } from '$app/stores';
-    import FeedTimeline from '$lib/components/FeedTimeline.svelte';
-    import Avatar from 'svelte-boring-avatars';
+  import FeedTimeline from '$lib/components/FeedTimeline.svelte';
+  import Avatar from 'svelte-boring-avatars';
 
   type Props = {
     data: {
@@ -35,7 +35,6 @@
     }
   });
 
-  $inspect($threadQuery);
   // @ts-ignore
   $effect(() => console.log($threadQuery.data.thread.parent?.post));
 </script>
