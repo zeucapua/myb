@@ -162,7 +162,7 @@
         <Icon icon="iconamoon:comment" class="size-6" />
         {data.post.replyCount}
       </button>
-      <button onclick={toastComingSoon} class="flex gap-1">
+      <button onclick={() => toastError("Must be logged in to repost")} class="flex gap-1">
         <Icon icon="bx:repost" class="size-6" />
         {reposts}
       </button>
