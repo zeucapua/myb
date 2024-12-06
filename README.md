@@ -24,11 +24,11 @@ please send a GitHub issue my way!
   - [x] Embeds
   - [x] Draft posts
   - [x] Bookmark posts
-  - [ ] Like/Unlike
-  - [ ] Repost
+  - [x] Like/Unlike
+  - [x] Repost
   - [ ] Quote Post
   - [ ] Comment
-  - [ ] Post page (`/p/<handle>/<record>`)
+  - [x] Post page (`/p/<handle>/<record>`)
   - [ ] [Draft + Publish Threads](https://github.com/zeucapua/myb/issues/1)
   - [ ] CRON-based scheduled posting
 - [ ] Feeds
