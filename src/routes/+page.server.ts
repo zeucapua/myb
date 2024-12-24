@@ -42,11 +42,7 @@ export const actions: Actions = {
       });
       await rt.detectFacets(locals.agent);
 
-      locals.agent.post({
-        $type: "app.bsky.feed.post", // lexicon
-        text: rt.text,
-        facets: rt.facets,
-        createdAt: new Date().toISOString(),
+      const reply = (parent_cid && parent_uri && root_cid && root_uri) ? {
         reply: {
           root: {
             cid: root_cid,
@@ -57,6 +53,14 @@ export const actions: Actions = {
             uri: parent_uri 
           }
         }
+      } : {};
+
+      locals.agent.post({
+        $type: "app.bsky.feed.post", // lexicon
+        text: rt.text,
+        facets: rt.facets,
+        createdAt: new Date().toISOString(),
+        ...reply
       });
     }
 
