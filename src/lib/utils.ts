@@ -31,25 +31,22 @@ export async function renderTextToMarkdownToHTML(text: string, agent: Agent | At
   return html;
 }
 
-export function getThreadRoot(thread: ThreadViewPost) {
+export function getThreadRoot(thread: ThreadViewPost): { cid: string, uri: string } {
   if (thread.parent) {
     if (thread.parent?.parent) {
-      console.log("parent parent", thread.parent.parent);
       getThreadRoot(thread.parent.parent as ThreadViewPost);
     }
     else {
-      console.log("parent", thread.parent);
       return {
-        cid: (thread.parent.post as FeedViewPost).cid,
-        uri: (thread.parent.post as FeedViewPost).uri
+        cid: (thread.parent.post as FeedViewPost).cid as string,
+        uri: (thread.parent.post as FeedViewPost).uri as string
       }
     }
   }
-  else {
-    return {
-      cid: thread.post.cid,
-      uri: thread.post.uri
-    }
+
+  return {
+    cid: thread.post.cid,
+    uri: thread.post.uri
   }
 }
 

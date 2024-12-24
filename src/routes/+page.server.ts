@@ -3,7 +3,7 @@ import { db } from "$lib/server/db";
 import * as schema from "$lib/schema";
 import { atclient } from "$lib/server/client";
 import { isValidHandle } from "@atproto/syntax";
-import { Agent, AtpBaseClient, RichText } from "@atproto/api";
+import { Agent, RichText } from "@atproto/api";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {

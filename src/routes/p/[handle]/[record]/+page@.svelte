@@ -53,11 +53,9 @@
       reposts = $threadQuery.data?.thread.post.repostCount ?? 0;
       repostUri = $threadQuery.data?.thread.post.viewer?.repost ?? "";
       
-      root = getThreadRoot($threadQuery.data.thread) as { cid: string, uri: string } ?? { cid: "", uri: "" };
+      root = getThreadRoot($threadQuery.data.thread); 
     }
   });
-
-  $inspect({ root });
 </script>
 
 <div class="flex flex-col gap-8 w-full max-w-xl mx-auto">
