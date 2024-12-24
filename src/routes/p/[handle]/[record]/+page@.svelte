@@ -11,7 +11,8 @@
   import { page } from '$app/state';
   import FeedTimeline from '$lib/components/FeedTimeline.svelte';
   import Avatar from 'svelte-boring-avatars';
-    import Drafter from '$lib/components/Drafter.svelte';
+  import Drafter from '$lib/components/Drafter.svelte';
+  import { getThreadRoot } from "$lib/utils";
 
   type Props = {
     data: {
@@ -42,6 +43,8 @@
   let reposts = $state(0);
   let repostUri = $state("");
 
+  let root = $state({ cid: "", uri: "" });
+
   $effect(() => {
     if ($threadQuery.isSuccess) {
       likes = $threadQuery.data.thread.post.likeCount ?? 0;
@@ -49,17 +52,12 @@
 
       reposts = $threadQuery.data?.thread.post.repostCount ?? 0;
       repostUri = $threadQuery.data?.thread.post.viewer?.repost ?? "";
+      
+      root = getThreadRoot($threadQuery.data.thread) as { cid: string, uri: string } ?? { cid: "", uri: "" };
     }
   });
 
-  function getRootPost({ parent }: { parent?: ThreadViewPost }) {
-    if (parent?.parent) { getRootPost({ parent: parent.parent as ThreadViewPost }); }
-    else {
-      return parent;
-    }
-  }
-
-  $inspect($threadQuery.data);
+  $inspect({ root });
 </script>
 
 <div class="flex flex-col gap-8 w-full max-w-xl mx-auto">
@@ -221,20 +219,23 @@
       </menu>
     </article>
 
-    {#if $threadQuery.data.thread.replies && $threadQuery.data.thread.replies.length > 0}
-      <section class="flex flex-col gap-4 border-t-2 py-4">
-        <h2 class="text-lg font-medium">Replies</h2>
-        <Drafter>
-          {#snippet miscInputs()}
-            <input name="root_cid" type="hidden" value={getRootPost({ parent: $threadQuery.data.thread as ThreadViewPost })?.cid} />
-            <input name="root_uri" type="hidden" value={getRootPost({ parent: $threadQuery.data.thread as ThreadViewPost })?.uri} />
-            <input name="parent_cid" type="hidden" value={$threadQuery.data.thread.post.cid} />
-            <input name="parent_uri" type="hidden" value={$threadQuery.data.thread.post.uri} />
-          {/snippet}
-        </Drafter>
+    <section class="flex flex-col gap-4 border-t-2 py-4">
+      <h2 class="text-lg font-medium">Replies</h2>
+      <Drafter>
+        {#snippet miscInputs()}
+          <input name="root_cid" type="hidden" value={root.cid} />
+          <input name="root_uri" type="hidden" value={root.uri} />
+          <input name="parent_cid" type="hidden" value={$threadQuery.data.thread.post.cid} />
+          <input name="parent_uri" type="hidden" value={$threadQuery.data.thread.post.uri} />
+        {/snippet}
+      </Drafter>
+
+      {#if $threadQuery.data.thread.replies && $threadQuery.data.thread.replies.length > 0}
         <FeedTimeline feed={$threadQuery.data.thread.replies as FeedViewPost[]} />
-      </section>
-    {/if}
+      {:else}
+        <p>No replies yet</p>
+      {/if}
+    </section>
 
   {:else}
     <p>Error loading (Record URI: {data.recordUri})</p>

@@ -6,7 +6,6 @@
   import { getContext, onDestroy, type Snippet } from "svelte";
   import ProfileSummary from "$lib/components/ProfileSummary.svelte";
   import type { ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-    import Page from "./+page.svelte";
 
   type Props = {
     data: { user: ProfileViewDetailed, profile: ProfileViewDetailed };
