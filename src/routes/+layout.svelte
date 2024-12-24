@@ -11,6 +11,7 @@
   import IconDrawer from '$lib/components/IconDrawer.svelte';
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
+    import Drafter from '$lib/components/Drafter.svelte';
 
 	let { data, children } = $props();
   const user = data.user as ProfileViewDetailed;
@@ -136,27 +137,7 @@
         trigger={PostDrawerTrigger}
       >
         {#snippet content()}
-          <form use:enhance action="/?/createPost" method="POST" class="flex flex-col gap-4">
-            <textarea 
-              name="content" 
-              bind:value={contentInput} 
-              placeholder="Say something" 
-              class="bg-transparent border rounded px-4 py-2"
-              style="field-sizing: content;"
-              maxlength={300}
-            >
-            </textarea>
-            <div class="self-end flex gap-2">
-              <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
-                Save Draft
-              </button>
-              <button type="submit" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
-                Post
-              </button>
-            </div>
-          </form>
-
-          <a href="/console" class="underline">Drafts</a>
+          <Drafter />
         {/snippet}
       </IconDrawer>
     {/if}

@@ -29,17 +29,34 @@ export const actions: Actions = {
     const formData = await request.formData();
     const content = formData.get("content") as string;
     const draftId = formData.get("draft_id") as string;
+    const parent_cid = formData.get("parent_cid") as string;
+    const parent_uri = formData.get("parent_uri") as string;
+    const root_cid = formData.get("root_cid") as string;
+    const root_uri = formData.get("root_uri") as string;
+
+    console.log({ content, draftId, root_cid, root_uri, parent_cid, parent_uri });
 
     if (locals.agent instanceof Agent) {
       const rt = new RichText({
         text: content
       });
       await rt.detectFacets(locals.agent);
+
       locals.agent.post({
         $type: "app.bsky.feed.post", // lexicon
         text: rt.text,
         facets: rt.facets,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        reply: {
+          root: {
+            cid: root_cid,
+            uri: root_uri
+          },
+          parent: { 
+            cid: parent_cid,
+            uri: parent_uri 
+          }
+        }
       });
     }
 

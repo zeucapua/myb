@@ -11,6 +11,7 @@
   import { page } from '$app/stores';
   import FeedTimeline from '$lib/components/FeedTimeline.svelte';
   import Avatar from 'svelte-boring-avatars';
+    import Drafter from '$lib/components/Drafter.svelte';
 
   type Props = {
     data: {
@@ -50,6 +51,15 @@
       repostUri = $threadQuery.data?.thread.post.viewer?.repost ?? "";
     }
   });
+
+  function getRootPost({ parent }: { parent?: ThreadViewPost }) {
+    if (parent?.parent) { getRootPost({ parent: parent.parent as ThreadViewPost }); }
+    else {
+      return parent;
+    }
+  }
+
+  $inspect($threadQuery.data);
 </script>
 
 <div class="flex flex-col gap-8 w-full max-w-xl mx-auto">
@@ -214,6 +224,14 @@
     {#if $threadQuery.data.thread.replies && $threadQuery.data.thread.replies.length > 0}
       <section class="flex flex-col gap-4 border-t-2 py-4">
         <h2 class="text-lg font-medium">Replies</h2>
+        <Drafter>
+          {#snippet miscInputs()}
+            <input name="root_cid" type="hidden" value={getRootPost({ parent: $threadQuery.data.thread as ThreadViewPost })?.cid} />
+            <input name="root_uri" type="hidden" value={getRootPost({ parent: $threadQuery.data.thread as ThreadViewPost })?.uri} />
+            <input name="parent_cid" type="hidden" value={$threadQuery.data.thread.post.cid} />
+            <input name="parent_uri" type="hidden" value={$threadQuery.data.thread.post.uri} />
+          {/snippet}
+        </Drafter>
         <FeedTimeline feed={$threadQuery.data.thread.replies as FeedViewPost[]} />
       </section>
     {/if}
