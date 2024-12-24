@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Tooltip } from "bits-ui";
   import Icon from "@iconify/svelte";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import Avatar from "svelte-boring-avatars";
   import { fade } from "svelte/transition";
   import PostEmbed from "./PostEmbed.svelte";
@@ -11,8 +11,8 @@
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
   let { data, isBordered = false }: { data: FeedViewPost, isBordered?: boolean } = $props();
-  const user = $page.data.user;
-  const bookmarks = $page.data.bookmarks as Set<string>; 
+  const user = page.data.user;
+  const bookmarks = page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
 
   let likes = $state(data.post.likeCount ?? 0);

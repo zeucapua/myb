@@ -8,7 +8,7 @@
   import { toastComingSoon, toastError } from '$lib/utils';
   import Icon from '@iconify/svelte';
   import { applyAction, enhance } from '$app/forms';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import FeedTimeline from '$lib/components/FeedTimeline.svelte';
   import Avatar from 'svelte-boring-avatars';
     import Drafter from '$lib/components/Drafter.svelte';
@@ -21,8 +21,8 @@
   }
   let { data }: Props = $props();
   let author = data.author;
-  const user = $page.data.user;
-  const bookmarks = $page.data.bookmarks as Set<string>; 
+  const user = page.data.user;
+  const bookmarks = page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.recordUri) ?? false);
 
   const threadQuery = createQuery({
