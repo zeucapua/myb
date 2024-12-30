@@ -34,8 +34,6 @@ export const actions: Actions = {
     const root_cid = formData.get("root_cid") as string;
     const root_uri = formData.get("root_uri") as string;
 
-    console.log({ content, draftId, root_cid, root_uri, parent_cid, parent_uri });
-
     if (locals.agent instanceof Agent) {
       const rt = new RichText({
         text: content
