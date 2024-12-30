@@ -3,15 +3,14 @@
   import posthog from 'posthog-js';
   import { Button } from 'bits-ui';
   import Icon from "@iconify/svelte";
-  import { enhance } from '$app/forms';
+  import { toastError } from "$lib/utils";
   import { browser } from '$app/environment';
   import { Toaster } from 'svelte-french-toast';
   import { setContext, type Snippet } from 'svelte';
-  import { toastError } from "$lib/utils";
+  import Drafter from '$lib/components/Drafter.svelte';
   import IconDrawer from '$lib/components/IconDrawer.svelte';
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
-    import Drafter from '$lib/components/Drafter.svelte';
 
 	let { data, children } = $props();
   const user = data.user as ProfileViewDetailed;
@@ -32,7 +31,6 @@
   });
 
   let handleInput = $state("");
-  let contentInput = $state("");
   let stayLoggedInChecked = $state(false);
 </script>
 
