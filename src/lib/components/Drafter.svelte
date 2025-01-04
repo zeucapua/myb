@@ -1,20 +1,49 @@
 <script lang="ts">
   import { page } from "$app/state";
-  import { enhance } from "$app/forms";
+  import { applyAction, enhance } from "$app/forms";
   import type { Snippet } from "svelte";
   import { toastError } from "$lib/utils";
+  import { useQueryClient } from "@tanstack/svelte-query";
+  import type { ThreadViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
   type Props = {
     draftInput?: string;
+    replying?: boolean;
     miscInputs?: Snippet;
   };
 
-  let { draftInput = $bindable(""), miscInputs }: Props = $props();
+  let { draftInput = $bindable(""), replying = false, miscInputs }: Props = $props();
+
+  const queryClient = useQueryClient();
 </script>
 
 {#if page.data.user}
+  <form 
+    use:enhance={({ formElement}) => {
+      return async ({ result }) => {
+        if (replying) {
+          // @ts-ignore
+          const reply = result.data.newReply as ThreadViewPost;
+          await queryClient.cancelQueries({ queryKey: ["threadQuery"] });
+          const previousThread = queryClient.getQueryData<{ thread: ThreadViewPost }>(["threadQuery"]);
 
-  <form use:enhance action="/?/createPost" method="POST" class="flex flex-col gap-4">
+          if (previousThread) {
+            queryClient.setQueryData<{ thread: ThreadViewPost }>(["threadQuery"], {
+              thread: {
+                ...previousThread.thread,
+                replies: [ reply, ...previousThread.thread.replies || [] ]
+              }
+            });
+          }
+        }
+        formElement.reset();
+        await applyAction(result);
+      }
+    }} 
+    action={replying ? "/?/createReply" : "/?/createPost"}
+    method="POST" 
+    class="flex flex-col gap-4"
+  >
     <textarea 
       name="content" 
       bind:value={draftInput} 

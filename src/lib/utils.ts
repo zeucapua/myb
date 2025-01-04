@@ -50,6 +50,16 @@ export function getThreadRoot(thread: ThreadViewPost): { cid: string, uri: strin
   }
 }
 
+export function parseAtUri(uri: string) {
+  const regex = /at:\/\/(?<did>did.*)\/(?<lexi>.*)\/(?<rkey>.*)/;
+  const groups = regex.exec(uri)?.groups;
+  return {
+    did: groups?.did,
+    lexi: groups?.lexi,
+    rkey: groups?.rkey
+  }
+}
+
 export function toastComingSoon() {
   toast("Coming soon", {
     icon: "🙊" 

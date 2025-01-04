@@ -219,7 +219,7 @@
 
     <section class="flex flex-col gap-4 border-t-2 py-4">
       <h2 class="text-lg font-medium">Replies</h2>
-      <Drafter>
+      <Drafter replying>
         {#snippet miscInputs()}
           <input name="root_cid" type="hidden" value={root.cid} />
           <input name="root_uri" type="hidden" value={root.uri} />

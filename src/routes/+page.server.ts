@@ -1,9 +1,10 @@
-import { and, eq } from "drizzle-orm";
 import { db } from "$lib/server/db";
 import * as schema from "$lib/schema";
+import { and, eq } from "drizzle-orm";
 import { atclient } from "$lib/server/client";
-import { isValidHandle } from "@atproto/syntax";
 import { Agent, RichText } from "@atproto/api";
+import { isValidHandle } from "@atproto/syntax";
+import { renderTextToMarkdownToHTML } from "$lib/utils";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
 
 export const actions: Actions = {
@@ -29,6 +30,28 @@ export const actions: Actions = {
     const formData = await request.formData();
     const content = formData.get("content") as string;
     const draftId = formData.get("draft_id") as string;
+
+    if (locals.agent instanceof Agent) {
+      const rt = new RichText({
+        text: content
+      });
+      await rt.detectFacets(locals.agent);
+
+      locals.agent.post({
+        $type: "app.bsky.feed.post", // lexicon
+        text: rt.text,
+        facets: rt.facets,
+        createdAt: new Date().toISOString(),
+      });
+
+      if (draftId) {
+        await db.delete(schema.DraftPost).where(eq(schema.DraftPost.id, draftId));
+      }
+    }
+  },
+  "createReply": async ({ request, locals }) => {
+    const formData = await request.formData();
+    const content = formData.get("content") as string;
     const parent_cid = formData.get("parent_cid") as string;
     const parent_uri = formData.get("parent_uri") as string;
     const root_cid = formData.get("root_cid") as string;
@@ -40,7 +63,11 @@ export const actions: Actions = {
       });
       await rt.detectFacets(locals.agent);
 
-      const reply = (parent_cid && parent_uri && root_cid && root_uri) ? {
+      const reply = await locals.agent.post({
+        $type: "app.bsky.feed.post", // lexicon
+        text: rt.text,
+        facets: rt.facets,
+        createdAt: new Date().toISOString(),
         reply: {
           root: {
             cid: root_cid,
@@ -51,19 +78,16 @@ export const actions: Actions = {
             uri: parent_uri 
           }
         }
-      } : {};
-
-      locals.agent.post({
-        $type: "app.bsky.feed.post", // lexicon
-        text: rt.text,
-        facets: rt.facets,
-        createdAt: new Date().toISOString(),
-        ...reply
       });
-    }
 
-    if (draftId) {
-      await db.delete(schema.DraftPost).where(eq(schema.DraftPost.id, draftId));
+      const newReply = await locals.agent.getPostThread({  
+        uri: reply.uri
+      });
+
+      // @ts-ignore
+      newReply.data.thread.html = await renderTextToMarkdownToHTML(newReply.data.thread.post.record.text, locals.agent);
+
+      return { newReply: newReply.data.thread };
     }
   },
   "saveDraft": async ({ url, request, locals }) => {
