@@ -87,7 +87,7 @@ export const actions: Actions = {
       // @ts-ignore
       newReply.data.thread.html = await renderTextToMarkdownToHTML(newReply.data.thread.post.record.text, locals.agent);
 
-      return { newReply: newReply.data.thread };
+      return { newReply: JSON.stringify(newReply.data.thread) };
     }
   },
   "saveDraft": async ({ url, request, locals }) => {

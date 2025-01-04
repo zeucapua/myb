@@ -158,10 +158,10 @@
     </div>
 
     {#if !user}
-      <button onclick={toastComingSoon} class="flex gap-1">
+      <a href={`/p/${data.post.author.handle}/${record_id}#selected_post`} class="flex gap-1">
         <Icon icon="iconamoon:comment" class="size-6" />
         {data.post.replyCount}
-      </button>
+      </a>
       <button onclick={() => toastError("Must be logged in to repost")} class="flex gap-1">
         <Icon icon="bx:repost" class="size-6" />
         {reposts}
@@ -171,10 +171,10 @@
         {likes}
       </button>
     {:else}
-      <button onclick={toastComingSoon} class="flex gap-1">
+      <a href={`/p/${data.post.author.handle}/${record_id}#selected_post`} class="flex gap-1">
         <Icon icon="iconamoon:comment" class="size-6" />
         {data.post.replyCount}
-      </button>
+      </a>
       <form 
         method="POST" 
         action="/?/toggleRepostPost" 

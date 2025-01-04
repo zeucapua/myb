@@ -23,7 +23,7 @@
       return async ({ result }) => {
         if (replying) {
           // @ts-ignore
-          const reply = result.data.newReply as ThreadViewPost;
+          const reply = JSON.parse(result.data.newReply) as ThreadViewPost;
           await queryClient.cancelQueries({ queryKey: ["threadQuery"] });
           const previousThread = queryClient.getQueryData<{ thread: ThreadViewPost }>(["threadQuery"]);
 
