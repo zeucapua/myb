@@ -27,7 +27,7 @@ please send a GitHub issue my way!
   - [x] Like/Unlike
   - [x] Repost
   - [ ] Quote Post
-  - [ ] Comment
+  - [x] Reply
   - [x] Post page (`/p/<handle>/<record>`)
   - [ ] [Draft + Publish Threads](https://github.com/zeucapua/myb/issues/1)
   - [ ] CRON-based scheduled posting
