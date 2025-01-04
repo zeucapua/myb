@@ -2,6 +2,7 @@ import { marked } from "marked";
 import toast from "svelte-french-toast";
 import { Agent, RichText, type AtpBaseClient } from "@atproto/api";
 import { dev } from "$app/environment";
+import type { FeedViewPost, ThreadViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
 export async function renderTextToMarkdownToHTML(text: string, agent: Agent | AtpBaseClient) {
   const rt = new RichText({ text });
@@ -28,6 +29,35 @@ export async function renderTextToMarkdownToHTML(text: string, agent: Agent | At
 
   const html = await marked.parse(markdown);
   return html;
+}
+
+export function getThreadRoot(thread: ThreadViewPost): { cid: string, uri: string } {
+  if (thread.parent) {
+    if (thread.parent?.parent) {
+      getThreadRoot(thread.parent.parent as ThreadViewPost);
+    }
+    else {
+      return {
+        cid: (thread.parent.post as FeedViewPost).cid as string,
+        uri: (thread.parent.post as FeedViewPost).uri as string
+      }
+    }
+  }
+
+  return {
+    cid: thread.post.cid,
+    uri: thread.post.uri
+  }
+}
+
+export function parseAtUri(uri: string) {
+  const regex = /at:\/\/(?<did>did.*)\/(?<lexi>.*)\/(?<rkey>.*)/;
+  const groups = regex.exec(uri)?.groups;
+  return {
+    did: groups?.did,
+    lexi: groups?.lexi,
+    rkey: groups?.rkey
+  }
 }
 
 export function toastComingSoon() {

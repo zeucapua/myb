@@ -3,11 +3,11 @@
   import posthog from 'posthog-js';
   import { Button } from 'bits-ui';
   import Icon from "@iconify/svelte";
-  import { enhance } from '$app/forms';
+  import { toastError } from "$lib/utils";
   import { browser } from '$app/environment';
   import { Toaster } from 'svelte-french-toast';
   import { setContext, type Snippet } from 'svelte';
-  import { toastError } from "$lib/utils";
+  import Drafter from '$lib/components/Drafter.svelte';
   import IconDrawer from '$lib/components/IconDrawer.svelte';
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
@@ -31,7 +31,6 @@
   });
 
   let handleInput = $state("");
-  let contentInput = $state("");
   let stayLoggedInChecked = $state(false);
 </script>
 
@@ -136,27 +135,7 @@
         trigger={PostDrawerTrigger}
       >
         {#snippet content()}
-          <form use:enhance action="/?/createPost" method="POST" class="flex flex-col gap-4">
-            <textarea 
-              name="content" 
-              bind:value={contentInput} 
-              placeholder="Say something" 
-              class="bg-transparent border rounded px-4 py-2"
-              style="field-sizing: content;"
-              maxlength={300}
-            >
-            </textarea>
-            <div class="self-end flex gap-2">
-              <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
-                Save Draft
-              </button>
-              <button type="submit" class="w-fit border rounded px-4 py-2" disabled={contentInput.length === 0}>
-                Post
-              </button>
-            </div>
-          </form>
-
-          <a href="/console" class="underline">Drafts</a>
+          <Drafter />
         {/snippet}
       </IconDrawer>
     {/if}

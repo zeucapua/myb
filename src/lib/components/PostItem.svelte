@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Tooltip } from "bits-ui";
   import Icon from "@iconify/svelte";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import Avatar from "svelte-boring-avatars";
   import { fade } from "svelte/transition";
   import PostEmbed from "./PostEmbed.svelte";
@@ -11,8 +11,8 @@
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
   let { data, isBordered = false }: { data: FeedViewPost, isBordered?: boolean } = $props();
-  const user = $page.data.user;
-  const bookmarks = $page.data.bookmarks as Set<string>; 
+  const user = page.data.user;
+  const bookmarks = page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
 
   let likes = $state(data.post.likeCount ?? 0);
@@ -158,10 +158,10 @@
     </div>
 
     {#if !user}
-      <button onclick={toastComingSoon} class="flex gap-1">
+      <a href={`/p/${data.post.author.handle}/${record_id}#selected_post`} class="flex gap-1">
         <Icon icon="iconamoon:comment" class="size-6" />
         {data.post.replyCount}
-      </button>
+      </a>
       <button onclick={() => toastError("Must be logged in to repost")} class="flex gap-1">
         <Icon icon="bx:repost" class="size-6" />
         {reposts}
@@ -171,10 +171,10 @@
         {likes}
       </button>
     {:else}
-      <button onclick={toastComingSoon} class="flex gap-1">
+      <a href={`/p/${data.post.author.handle}/${record_id}#selected_post`} class="flex gap-1">
         <Icon icon="iconamoon:comment" class="size-6" />
         {data.post.replyCount}
-      </button>
+      </a>
       <form 
         method="POST" 
         action="/?/toggleRepostPost" 

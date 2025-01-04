@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+    import Drafter from "$lib/components/Drafter.svelte";
   import * as schema from "$lib/schema";
 
   let { data } = $props();
@@ -12,29 +13,12 @@
   }
 </script>
 
-<h1 class="text-3xl font-bold">Console</h1>
-<form use:enhance action="/?/createPost" method="POST" class="flex flex-col gap-4">
-  <input name="draft_id" type="hidden" bind:value={currentDraftId} />
-  <textarea 
-    name="content" 
-    bind:value={content} 
-    placeholder="Say something" 
-    class="bg-transparent border rounded px-4 py-2"
-    style="field-sizing: content;"
-    maxlength={300}
-  >
-  </textarea>
-  <div class="self-end flex gap-2">
-    <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={content.length === 0}>
-      Save Draft
-    </button>
-    <button type="submit" class="w-fit border rounded px-4 py-2" disabled={content.length === 0}>
-      Post
-    </button>
-  </div>
-</form>
+<h1 class="text-3xl font-bold">Drafts</h1>
+<Drafter bind:draftInput={content} />
 
-<h2 class="text-2xl font-bold">Drafts</h2>
+<div class="w-full h-0.5 bg-white"></div>
+
+<h2 class="text-2xl font-bold">Saved Drafts</h2>
 {#if data.drafts.length === 0}
   <p>No drafts saved.</p>
 {:else}

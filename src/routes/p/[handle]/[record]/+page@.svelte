@@ -8,9 +8,11 @@
   import { toastComingSoon, toastError } from '$lib/utils';
   import Icon from '@iconify/svelte';
   import { applyAction, enhance } from '$app/forms';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import FeedTimeline from '$lib/components/FeedTimeline.svelte';
   import Avatar from 'svelte-boring-avatars';
+  import Drafter from '$lib/components/Drafter.svelte';
+  import { getThreadRoot } from "$lib/utils";
 
   type Props = {
     data: {
@@ -20,8 +22,8 @@
   }
   let { data }: Props = $props();
   let author = data.author;
-  const user = $page.data.user;
-  const bookmarks = $page.data.bookmarks as Set<string>; 
+  const user = page.data.user;
+  const bookmarks = page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.recordUri) ?? false);
 
   const threadQuery = createQuery({
@@ -41,6 +43,8 @@
   let reposts = $state(0);
   let repostUri = $state("");
 
+  let root = $state({ cid: "", uri: "" });
+
   $effect(() => {
     if ($threadQuery.isSuccess) {
       likes = $threadQuery.data.thread.post.likeCount ?? 0;
@@ -48,6 +52,8 @@
 
       reposts = $threadQuery.data?.thread.post.repostCount ?? 0;
       repostUri = $threadQuery.data?.thread.post.viewer?.repost ?? "";
+      
+      root = getThreadRoot($threadQuery.data.thread); 
     }
   });
 </script>
@@ -211,12 +217,23 @@
       </menu>
     </article>
 
-    {#if $threadQuery.data.thread.replies && $threadQuery.data.thread.replies.length > 0}
-      <section class="flex flex-col gap-4 border-t-2 py-4">
-        <h2 class="text-lg font-medium">Replies</h2>
+    <section class="flex flex-col gap-4 border-t-2 py-4">
+      <h2 class="text-lg font-medium">Replies</h2>
+      <Drafter replying>
+        {#snippet miscInputs()}
+          <input name="root_cid" type="hidden" value={root.cid} />
+          <input name="root_uri" type="hidden" value={root.uri} />
+          <input name="parent_cid" type="hidden" value={$threadQuery.data.thread.post.cid} />
+          <input name="parent_uri" type="hidden" value={$threadQuery.data.thread.post.uri} />
+        {/snippet}
+      </Drafter>
+
+      {#if $threadQuery.data.thread.replies && $threadQuery.data.thread.replies.length > 0}
         <FeedTimeline feed={$threadQuery.data.thread.replies as FeedViewPost[]} />
-      </section>
-    {/if}
+      {:else}
+        <p>No replies yet</p>
+      {/if}
+    </section>
 
   {:else}
     <p>Error loading (Record URI: {data.recordUri})</p>
