@@ -1,17 +1,18 @@
 <script lang="ts">
-  import { Tooltip } from "bits-ui";
-  import Icon from "@iconify/svelte";
   import { page } from "$app/state";
-  import Avatar from "svelte-boring-avatars";
+  import Icon from "@iconify/svelte";
   import { fade } from "svelte/transition";
+  import Avatar from "svelte-boring-avatars";
   import PostEmbed from "./PostEmbed.svelte";
+  import { Tooltip, DropdownMenu, AlertDialog } from "bits-ui";
   import { applyAction, enhance } from "$app/forms";
   import { formatDistanceToNowStrict } from "date-fns";
   import { toastComingSoon, toastError } from "$lib/utils";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+  import type { ProfileViewDetailed } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
 
   let { data, isBordered = false }: { data: FeedViewPost, isBordered?: boolean } = $props();
-  const user = page.data.user;
+  const user = page.data.user as ProfileViewDetailed;
   const bookmarks = page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
 
@@ -22,7 +23,40 @@
   let repostUri = $state(data.post.viewer?.repost ?? "");
 
   const record_id = data.post.uri.split("/").at(data.post.uri.split("/").length - 1);
+
+  let isDeleteDialogOpen = $state(false);
 </script>
+
+<AlertDialog.Root bind:open={isDeleteDialogOpen}>
+  <AlertDialog.Portal>
+    <AlertDialog.Overlay 
+      transition={fade} 
+      transitionConfig={{ duration: 100 }}
+      class="fixed inset-0 z-50 bg-black/80" 
+    />
+    <AlertDialog.Content 
+      transition={fade}
+      transitionConfig={{ duration: 100 }}
+      class="fixed text-white z-50 left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] rounded-xl w-full max-w-[70%] h-fit p-8 bg-slate-800 shadow-lg"
+    >
+      <AlertDialog.Title class="text-xl text-white font-bold mb-4">
+        Delete this post?
+      </AlertDialog.Title>
+      <AlertDialog.Description class="text-slate-300">
+        If you remove this post, you won't be able to recover it.
+      </AlertDialog.Description>
+
+      <menu class="flex gap-4 w-full h-fit mt-8">
+        <AlertDialog.Cancel class="basis-1/2 bg-slate-600 px-4 py-2 rounded hover:bg-slate-700 cursor-pointer">
+          Cancel
+        </AlertDialog.Cancel>
+        <AlertDialog.Action class="basis-1/2 bg-red-500 px-4 py-2 rounded hover:bg-red-600 cursor-pointer">
+          Delete
+        </AlertDialog.Action>
+      </menu>
+    </AlertDialog.Content>
+  </AlertDialog.Portal>
+</AlertDialog.Root>
 
 <article class={`flex flex-col gap-4 p-4 hover:bg-white/[0.025] transition-all duration-150 ${isBordered && "border"} ${data.reason && "border-dashed"}`} data-sveltekit-reload>
   <section class="flex items-center justify-between w-full">
@@ -120,10 +154,10 @@
 
   <menu class="grid grid-cols-4 justify-items-end">
     <div class="flex gap-2 justify-self-start">
-      <button onclick={toastComingSoon} class="flex gap-1 justify-self-start">
-        <Icon icon="ph:wrench" class="size-6" />
-      </button>
       {#if !user}
+        <button onclick={toastComingSoon} class="flex gap-1 justify-self-start">
+          <Icon icon="ph:wrench" class="size-6" />
+        </button>
         <button onclick={() => toastError("Log in to bookmark")} class="flex gap-1 justify-self-start">
           <Icon 
             icon={isBookmarked ? "mingcute:bookmark-fill" : "mingcute:bookmark-line"}
@@ -131,6 +165,25 @@
           />
         </button>
       {:else}
+        <DropdownMenu.Root> 
+          <DropdownMenu.Trigger class="flex gap-1 justify-self-start">
+            <Icon icon="ph:wrench" class="size-6" />
+          </DropdownMenu.Trigger>
+
+          <DropdownMenu.Content 
+            class="flex flex-col gap-2 bg-slate-800 min-w-12 h-fit p-2 rounded-lg shadow-lg border border-slate-600 text-sm text-white"
+          >
+            {#if data.post.author.did === user.did}
+              <DropdownMenu.Item 
+                onclick={() => isDeleteDialogOpen = true}
+                class="text-red-400 cursor-pointer flex items-center px-2 py-1 gap-2 hover:bg-white/5 transition-all duration-150 rounded"
+              >
+                <Icon icon="ph:trash" class="size-4" />
+                <p>Delete post</p> 
+              </DropdownMenu.Item>
+            {/if}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
         <form
           method="POST" 
           action="/?/bookmarkPost"

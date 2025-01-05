@@ -90,6 +90,9 @@ export const actions: Actions = {
       return { newReply: JSON.stringify(newReply.data.thread) };
     }
   },
+  "deletePost": async ({ request, locals }) => {
+
+  },
   "saveDraft": async ({ url, request, locals }) => {
     const formData = await request.formData();
     const content = formData.get("content") as string;

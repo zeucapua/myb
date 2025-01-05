@@ -22,7 +22,7 @@
   }
   let { data }: Props = $props();
   let author = data.author;
-  const user = page.data.user;
+  const user = page.data.user as ProfileViewDetailed | undefined;
   const bookmarks = page.data.bookmarks as Set<string>; 
   let isBookmarked = $state(bookmarks.has(data.recordUri) ?? false);
 
