@@ -50,9 +50,12 @@
         <AlertDialog.Cancel class="basis-1/2 bg-slate-600 px-4 py-2 rounded hover:bg-slate-700 cursor-pointer">
           Cancel
         </AlertDialog.Cancel>
-        <AlertDialog.Action class="basis-1/2 bg-red-500 px-4 py-2 rounded hover:bg-red-600 cursor-pointer">
-          Delete
-        </AlertDialog.Action>
+        <form method="POST" action="/?/deletePost" class="basis-1/2">
+          <input name="post_uri" type="hidden" value={data.post.uri} />
+          <AlertDialog.Action type="submit" class="w-full bg-red-500 px-4 py-2 rounded hover:bg-red-600 cursor-pointer">
+            Delete
+          </AlertDialog.Action>
+        </form>
       </menu>
     </AlertDialog.Content>
   </AlertDialog.Portal>

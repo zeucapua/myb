@@ -6,6 +6,7 @@ import { Agent, RichText } from "@atproto/api";
 import { isValidHandle } from "@atproto/syntax";
 import { renderTextToMarkdownToHTML } from "$lib/utils";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
+import { useQueryClient } from "@tanstack/svelte-query";
 
 export const actions: Actions = {
   "login": async ({ cookies, request }) => {
@@ -91,7 +92,24 @@ export const actions: Actions = {
     }
   },
   "deletePost": async ({ request, locals }) => {
+    const formData = await request.formData();
+    const post_uri = formData.get("post_uri") as string | undefined;
 
+    try {
+      if (!(locals.agent instanceof Agent)) {
+        throw Error("Not logged in");
+      }
+
+      if (!post_uri) {
+        throw Error("Post URI not given");
+      }
+
+      await locals.agent.deletePost(post_uri);
+      return { message: "deleted post", post_uri }
+    }
+    catch (e) {
+      return fail(500);
+    }
   },
   "saveDraft": async ({ url, request, locals }) => {
     const formData = await request.formData();
