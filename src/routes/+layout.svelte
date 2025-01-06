@@ -1,6 +1,5 @@
 <script lang="ts">
   import '../app.css';
-  import posthog from 'posthog-js';
   import { Button } from 'bits-ui';
   import Icon from "@iconify/svelte";
   import { toastError } from "$lib/utils";
@@ -48,33 +47,18 @@
     <Toaster />
     <main class="flex flex-col gap-4 p-6 pb-16">
       <nav class="flex gap-4 justify-between items-center">
-        <a 
-          href="/" 
-          onclick={() => {
-            posthog.capture("clicked: top nav", { button: "Homepage logo" });
-          }}
-          class="font-bold text-xl flex gap-2"
-        >
+        <a href="/" class="font-bold text-xl flex gap-2">
           <Icon icon="game-icons:butterfly-warning" class="size-8" />
           myb
         </a>
         <div class="flex gap-4 items-center">
           {#if user}
             <form action="/?/logout" method="POST" class="flex gap-4">
-              <a 
-                href={`/p/${user.handle}`} 
-                onclick={() => {
-                  posthog.capture("clicked: top nav", { button: "User profile" });
-                }}
-                data-sveltekit-reload
-              >
+              <a href={`/p/${user.handle}`} data-sveltekit-reload>
                 <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
               </a>
               <button 
                 type="submit" 
-                onclick={() => {
-                  posthog.capture("clicked: top nav", { button: "Logout" });
-                }}
                 class="border rounded px-4 py-2"
               >
                 Logout
@@ -92,9 +76,6 @@
                 />
                 <button 
                   type="submit" 
-                  onclick={() => {
-                    posthog.capture("clicked: top nav", { button: "Login" });
-                  }}
                   disabled={!handleInput}
                   class="border rounded px-4 py-2"
                 >
@@ -120,7 +101,6 @@
     {#snippet PostDrawerTrigger()}
       <Button.Root
         onclick={() => { 
-          posthog.capture("clicked: bottom menu", { button: "Create Post" });
           if (!user) { toastError("Must be logged in to post"); } 
         }}
         class="fixed bottom-20 right-4 z-50 rounded-full flex items-center bg-pink-500 p-4 w-fit gap-4 hover:bg-pink-600/95 active:scale-95 active:transition-all duration-150"
@@ -143,39 +123,23 @@
     <menu class="z-10 flex flex-col gap-4 items-end fixed bottom-0 inset-x-0"> 
       <section class="flex w-full h-fit p-4 border-t justify-between bg-slate-800">
         <div class="w-fit flex gap-4 items-center">
-          <a 
-            href="/search"
-            onclick={() => {
-              posthog.capture("clicked: bottom menu", { button: "Search" });
-            }}
-          >
+          <a href="/search">
             <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
           </a>
           {#if user}
-            <a
-              href="/bookmarks"
-              onclick={() => {
-                posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
-              }}
-            >
+            <a href="/bookmarks">
               <Icon icon="hugeicons:all-bookmark" class="size-8" />
             </a>
           {:else}
             <button
               onclick={() => {
-                posthog.capture("clicked: bottom menu", { button: "Bookmarks" });
                 toastError("Log in to see bookmarks");
               }}
             >
               <Icon icon="hugeicons:all-bookmark" class="size-8" />
             </button>
           {/if}
-          <a
-            href="/"
-            onclick={() => {
-              posthog.capture("clicked: bottom menu", { button: "Home" });
-            }}
-          >
+          <a href="/">
             <Icon icon="iconamoon:home-light" class="size-8" />
           </a>
 
