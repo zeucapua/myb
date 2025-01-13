@@ -40,7 +40,6 @@
 		"drizzle-orm": "^0.33.0",
 		"hls.js": "^1.5.18",
 		"marked": "^14.1.4",
-		"posthog-js": "^1.203.1",
 		"svelte-boring-avatars": "^1.2.6",
 		"svelte-french-toast": "^1.2.0",
 		"vaul-svelte": "^0.3.2",
