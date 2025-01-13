@@ -29,8 +29,10 @@ please send a GitHub issue my way!
   - [ ] Quote Post
   - [x] Reply
   - [x] Post page (`/p/<handle>/<record>`)
-  - [ ] [Draft + Publish Threads](https://github.com/zeucapua/myb/issues/1)
+  - [x] Delete post  
   - [ ] CRON-based scheduled posting
+  - [ ] [Draft + Publish Threads](https://github.com/zeucapua/myb/issues/1)
+  - [ ] [Redraft posts](https://github.com/zeucapua/myb/issues/41)
 - [ ] Feeds
   - [x] Post pagination
   - [x] Toggle reposts/replies
