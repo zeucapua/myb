@@ -55,7 +55,7 @@
           use:enhance={() => {
             return async ({ result }) => {
               // @ts-ignore
-              if (result.data.uri === data.post.uri) {
+              if (result.data.post_uri === data.post.uri) {
                 isDeleted = true;
               }
               await applyAction(result);

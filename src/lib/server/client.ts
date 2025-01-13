@@ -4,7 +4,7 @@ import { SessionStore, StateStore } from "./storage";
 import { dev } from "$app/environment";
 
 const publicUrl = "https://myb.zeu.dev";
-const url = dev ? "http://127.0.0.1:5173" : publicUrl; // since I'm using ipv6, use ::1 instead 127.0.0.1
+const url = dev ? "http://[::1]:5173" : publicUrl; // since I'm using ipv6, use [::1] instead 127.0.0.1
 const enc = encodeURIComponent;
 
 export const atclient = new NodeOAuthClient({

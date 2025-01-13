@@ -6,7 +6,6 @@ import { Agent, RichText } from "@atproto/api";
 import { isValidHandle } from "@atproto/syntax";
 import { renderTextToMarkdownToHTML } from "$lib/utils";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
-import { useQueryClient } from "@tanstack/svelte-query";
 
 export const actions: Actions = {
   "login": async ({ cookies, request }) => {
