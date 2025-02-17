@@ -26,6 +26,8 @@
 
   let isDeleteDialogOpen = $state(false);
   let isDeleted = $state(false);
+
+  $inspect(data.post.embed && { embed: data.post.embed });
 </script>
 
 <AlertDialog.Root bind:open={isDeleteDialogOpen}>

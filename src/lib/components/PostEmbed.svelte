@@ -12,10 +12,11 @@
     AppBskyFeedDefs,
     AppBskyGraphDefs,
     AtUri,
+    type $Typed,
   } from "@atproto/api";
   import type { ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
   import type { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-    import YoutubePlayerEmbed from "./YoutubePlayerEmbed.svelte";
+  import YoutubePlayerEmbed from "./YoutubePlayerEmbed.svelte";
 
   type Embed =
   | AppBskyEmbedRecord.View
@@ -28,7 +29,7 @@
   let { embed, disableQuotes = false }: { embed: Embed, disableQuotes?: boolean } = $props();
 
   function getStarterPackOgCard(
-      didOrStarterPack: AppBskyGraphDefs.StarterPackView | string,
+      didOrStarterPack: $Typed<AppBskyGraphDefs.StarterPackViewBasic> | string,
       rkey?: string,
   ) {
     if (typeof didOrStarterPack === 'string') {
@@ -39,8 +40,6 @@
       return `https://ogcard.cdn.bsky.app/start/${didOrStarterPack.creator.did}/${rkey}`
     }
   }
-
-  console.log({ embed });
 </script>
 
 <!-- Images -->
@@ -102,7 +101,7 @@
       <!-- TODO: link to List page /p/<handle>/l/<record_id> -->
       <div class="border rounded flex p-3 gap-4">
         {#if embed.record.avatar}
-          <img src={embed.record.avatar} class="size-8" alt={`${embed.record.displayName} feed`} />
+          <img src={embed.record.avatar} class="size-8" alt={`${embed.record.name} feed`} />
         {:else}
           <Icon icon="hugeicons:satellite-03" class="size-12 p-2 bg-blue-500 rounded"/>
         {/if}
