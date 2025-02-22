@@ -69,20 +69,20 @@
 {#snippet feedSelector()}
   <Select.Root items={feeds} bind:selected={selectedFeed}>
     <Select.Trigger
-      class="inline-flex h-input py-2 w-48 justify-between items-center rounded-lg border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50  focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+      class="inline-flex h-input py-2 w-48 justify-between items-center rounded-lg border border-border-input bg-background px-[11px] text-sm transition-colors placeholder:text-foreground-alt/50  focus:outline-hidden focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
       aria-label="Select a feed"
     >
       <Select.Value class="text-sm" placeholder="Select a feed" />
       <Icon icon="uil:angle-down" />
     </Select.Trigger>
     <Select.Content
-      class="z-50 w-full rounded-xl border border-white bg-white px-1 py-3 shadow-popover outline-none"
+      class="z-50 w-full rounded-xl border border-white bg-white px-1 py-3 shadow-popover outline-hidden"
       transition={fly}
       sideOffset={8}
     >
       {#each feeds as feed}
         <Select.Item
-          class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-none transition-all duration-75 data-[highlighted]:bg-neutral-200 rounded-lg"
+          class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm outline-hidden transition-all duration-75 data-highlighted:bg-neutral-200 rounded-lg"
           value={feed.value}
           label={feed.label}
         >
@@ -111,7 +111,7 @@
           onclick={() => { 
             $discoveryQuery.fetchNextPage(); 
           }}
-          class="px-4 py-2 border rounded"
+          class="px-4 py-2 border rounded-sm"
         >
           Load more...
         </button>
@@ -133,7 +133,7 @@
           onclick={() => { 
             $followingQuery.fetchNextPage(); 
           }}
-          class="px-4 py-2 border rounded"
+          class="px-4 py-2 border rounded-sm"
         >
           Load more...
         </button>

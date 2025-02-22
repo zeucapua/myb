@@ -43,7 +43,7 @@
 </script>
 
 {#snippet dataBlock(title: string, value: any, icon?: string, subtitle?: any)}
-  <div class="flex flex-col justify-between border p-4 rounded">
+  <div class="flex flex-col justify-between border p-4 rounded-sm">
     <h3 class="text-sm font-medium flex items-center gap-2">
       {#if icon}
         <Icon {icon} />
@@ -77,7 +77,7 @@
     </section>
     <Collapsible.Root class="flex flex-col gap-4">
       <Collapsible.Trigger>
-        <div class="flex justify-between gap-4 border px-4 py-2 rounded items-center">
+        <div class="flex justify-between gap-4 border px-4 py-2 rounded-sm items-center">
           <h2 class="font-bold">Top Skeets</h2>
           <Icon icon="mingcute:down-fill" />
         </div>

@@ -23,7 +23,7 @@
   <p>No drafts saved.</p>
 {:else}
   {#each data.drafts as draft: DraftPost.$inferSelect}
-    <article class="flex flex-col gap-4 border p-4 rounded">
+    <article class="flex flex-col gap-4 border p-4 rounded-sm">
       <p>{draft.content}</p>
       <div class="flex gap-4">
         <button onclick={() => editDraft(draft)}>Write</button>

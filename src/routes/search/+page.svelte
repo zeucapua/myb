@@ -11,8 +11,8 @@
 
   <search>
     <form use:enhance action="?/searchHandle" method="POST">
-      <input name="handle" type="search" placeholder="zeu.dev" class="bg-transparent border px-4 py-2 rounded"/>
-      <button type="submit" class="border px-4 py-2 rounded">Search</button>
+      <input name="handle" type="search" placeholder="zeu.dev" class="bg-transparent border px-4 py-2 rounded-sm"/>
+      <button type="submit" class="border px-4 py-2 rounded-sm">Search</button>
     </form>
   </search>
 
@@ -20,7 +20,7 @@
     {#if form.success}
       <ul class="flex flex-col gap-4">
         {#each form.actors as actor: ProfileView}
-          <li class="flex justify-between border p-4 rounded w-full max-w-[32rem]">
+          <li class="flex justify-between border p-4 rounded-sm w-full max-w-[32rem]">
             <ProfileSummary profile={actor} hideFollowStats />
             <a href={`/p/${actor.handle}`} class="flex gap-2 items-center self-start">
               <p class="text-sm">Profile</p>

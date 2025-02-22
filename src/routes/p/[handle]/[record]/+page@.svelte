@@ -82,7 +82,7 @@
       </AlertDialog.Description>
 
       <menu class="flex gap-4 w-full h-fit mt-8">
-        <AlertDialog.Cancel class="basis-1/2 bg-slate-600 px-4 py-2 rounded hover:bg-slate-700 cursor-pointer">
+        <AlertDialog.Cancel class="basis-1/2 bg-slate-600 px-4 py-2 rounded-sm hover:bg-slate-700 cursor-pointer">
           Cancel
         </AlertDialog.Cancel>
         <form 
@@ -97,7 +97,7 @@
           class="basis-1/2"
         >
           <input name="post_uri" type="hidden" value={$threadQuery.data?.thread.post.uri} />
-          <AlertDialog.Action type="submit" class="w-full bg-red-500 px-4 py-2 rounded hover:bg-red-600 cursor-pointer">
+          <AlertDialog.Action type="submit" class="w-full bg-red-500 px-4 py-2 rounded-sm hover:bg-red-600 cursor-pointer">
             Delete
           </AlertDialog.Action>
         </form>
@@ -123,7 +123,7 @@
             <img 
               src={author.avatar} 
               alt={`${author.handle} profile picture`} 
-              class="size-8 rounded"
+              class="size-8 rounded-sm"
             />
           {:else}
             <Avatar name={author.displayName} variant="bauhaus" />
@@ -175,7 +175,7 @@
                 {#if $threadQuery.data.thread.post.author.did === user.did}
                   <DropdownMenu.Item 
                     onclick={() => isDeleteDialogOpen = true}
-                    class="text-red-400 cursor-pointer flex items-center px-2 py-1 gap-2 hover:bg-white/5 transition-all duration-150 rounded"
+                    class="text-red-400 cursor-pointer flex items-center px-2 py-1 gap-2 hover:bg-white/5 transition-all duration-150 rounded-sm"
                   >
                     <Icon icon="ph:trash" class="size-4" />
                     <p>Delete post</p> 

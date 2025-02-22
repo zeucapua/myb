@@ -26,17 +26,17 @@
   {#if data.profile.viewer?.following}
     <form use:enhance method="POST" action="?/unfollowUser">
       <input name="follow_uri" type="hidden" value={data.profile.viewer.following} />
-      <Button.Root type="submit" class="flex items-center bg-red-500 px-4 py-2 rounded w-full gap-4 text-sm hover:bg-yellow-600/95 active:scale-95 active:transition-all duration-150">
+      <Button.Root type="submit" class="flex items-center bg-red-500 px-4 py-2 rounded-sm w-full gap-4 text-sm hover:bg-yellow-600/95 active:scale-95 active:transition-all duration-150">
         Unfollow 
       </Button.Root>
     </form>
   {:else if !data.user}
-    <Button.Root onclick={() => toastError("Log in to follow")} class="flex text-black items-center bg-yellow-500 px-4 py-2 rounded w-full gap-4 text-sm hover:bg-yellow-600/95 active:scale-95 active:transition-all duration-150">
+    <Button.Root onclick={() => toastError("Log in to follow")} class="flex text-black items-center bg-yellow-500 px-4 py-2 rounded-sm w-full gap-4 text-sm hover:bg-yellow-600/95 active:scale-95 active:transition-all duration-150">
       Follow
     </Button.Root>
   {:else if data.profile.viewer?.followedBy}
     <form use:enhance method="POST" action="?/followUser">
-      <Button.Root type="submit" class="flex text-black items-center bg-yellow-500 px-4 py-2 rounded w-full gap-4 text-sm hover:bg-yellow-600/95 active:scale-95 active:transition-all duration-150">
+      <Button.Root type="submit" class="flex text-black items-center bg-yellow-500 px-4 py-2 rounded-sm w-full gap-4 text-sm hover:bg-yellow-600/95 active:scale-95 active:transition-all duration-150">
         Follow
       </Button.Root>
     </form>

@@ -35,7 +35,7 @@
       onclick={() => { 
         $authorFeedQuery.fetchNextPage(); 
       }}
-      class="px-4 py-2 border rounded"
+      class="px-4 py-2 border rounded-sm"
     >
       Load more...
     </button>

@@ -48,7 +48,7 @@
       name="content" 
       bind:value={draftInput} 
       placeholder="Say something" 
-      class="bg-transparent border rounded px-4 py-2"
+      class="bg-transparent border rounded-sm px-4 py-2"
       style="field-sizing: content;"
       maxlength={300}
     >
@@ -57,10 +57,10 @@
     {@render miscInputs?.()}
 
     <div class="self-end flex gap-2">
-      <button formaction="/?/saveDraft" class="w-fit border rounded px-4 py-2" disabled={draftInput.length === 0}>
+      <button formaction="/?/saveDraft" class="w-fit border rounded-sm px-4 py-2" disabled={draftInput.length === 0}>
         Save Draft
       </button>
-      <button type="submit" class="w-fit border rounded px-4 py-2 cursor-pointer disabled:cursor-not-allowed" disabled={draftInput.length === 0}>
+      <button type="submit" class="w-fit border rounded-sm px-4 py-2 cursor-pointer disabled:cursor-not-allowed" disabled={draftInput.length === 0}>
         Post
       </button>
     </div>
@@ -72,7 +72,7 @@
     name="content" 
     bind:value={draftInput}
     placeholder="Say something" 
-    class="bg-transparent border rounded px-4 py-2"
+    class="bg-transparent border rounded-sm px-4 py-2"
     style="field-sizing: content;"
     onfocusin={() => toastError("Log in to reply")}
   >
