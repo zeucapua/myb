@@ -48,7 +48,7 @@
       </AlertDialog.Description>
 
       <menu class="flex gap-4 w-full h-fit mt-8">
-        <AlertDialog.Cancel class="basis-1/2 bg-slate-600 px-4 py-2 rounded hover:bg-slate-700 cursor-pointer">
+        <AlertDialog.Cancel class="basis-1/2 bg-slate-600 px-4 py-2 rounded-sm hover:bg-slate-700 cursor-pointer">
           Cancel
         </AlertDialog.Cancel>
         <form 
@@ -66,7 +66,7 @@
           class="basis-1/2"
         >
           <input name="post_uri" type="hidden" value={data.post.uri} />
-          <AlertDialog.Action type="submit" class="w-full bg-red-500 px-4 py-2 rounded hover:bg-red-600 cursor-pointer">
+          <AlertDialog.Action type="submit" class="w-full bg-red-500 px-4 py-2 rounded-sm hover:bg-red-600 cursor-pointer">
             Delete
           </AlertDialog.Action>
         </form>
@@ -88,7 +88,7 @@
             <img 
               src={data.post.author.avatar} 
               alt={`${data.post.author.handle} profile picture`} 
-              class="size-8 rounded"
+              class="size-8 rounded-sm"
             />
           {:else}
             <Avatar name={data.post.author.displayName} variant="bauhaus" />
@@ -119,7 +119,7 @@
                 <img 
                   src={data.reason.by!.avatar} 
                   alt={`${data.reason.by!.handle || "unknown"} profile picture`} 
-                  class="size-8 rounded"
+                  class="size-8 rounded-sm"
                 />
               </a>
             </Tooltip.Trigger>
@@ -133,7 +133,7 @@
                 <Tooltip.Arrow class="rounded-[2px] border-l border-t border-dark-10" />
               </div>
               <div
-                class="rounded flex flex-col justify-center rounded-input border border-dark-10 bg-white px-2 py-1 text-xs font-medium shadow-popover outline-none"
+                class="rounded-sm flex flex-col justify-center rounded-input border border-dark-10 bg-white px-2 py-1 text-xs font-medium shadow-popover outline-hidden"
               >
                 <p class="text-xs font-bold">{data.reason.by!.displayName || "unknown"}</p>
                 <p class="text-xs">@{data.reason.by!.handle || "unknown"}</p>
@@ -198,7 +198,7 @@
               {#if data.post.author.did === user.did}
                 <DropdownMenu.Item 
                   onclick={() => isDeleteDialogOpen = true}
-                  class="text-red-400 cursor-pointer flex items-center px-2 py-1 gap-2 hover:bg-white/5 transition-all duration-150 rounded"
+                  class="text-red-400 cursor-pointer flex items-center px-2 py-1 gap-2 hover:bg-white/5 transition-all duration-150 rounded-sm"
                 >
                   <Icon icon="ph:trash" class="size-4" />
                   <p>Delete post</p> 

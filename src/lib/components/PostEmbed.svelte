@@ -57,7 +57,7 @@
     {:else if embed.external.uri.includes("youtu.be")}
       <YoutubePlayerEmbed {embed} /> 
     {:else}
-      <div class="flex flex-col rounded border">
+      <div class="flex flex-col rounded-sm border">
         <img src={embed.external.thumb} alt={embed.external.description} class="w-full h-full aspect-[1.91/1] object-cover" />
         <div class="p-3 flex flex-col gap-2">
           <h1 class="font-medium">{embed.external.title || embed.external.uri}</h1>
@@ -82,11 +82,11 @@
     <!-- Feed -->
     {#if AppBskyFeedDefs.isGeneratorView(embed.record)}
       <!-- TODO: link to Feed page /p/<handle>/f/<record_id> -->
-      <div class="border rounded flex p-3 gap-4">
+      <div class="border rounded-sm flex p-3 gap-4">
         {#if embed.record.avatar}
           <img src={embed.record.avatar} class="size-8" alt={`${embed.record.displayName} feed`} />
         {:else}
-          <Icon icon="hugeicons:satellite-03" class="size-12 p-2 bg-blue-500 rounded"/>
+          <Icon icon="hugeicons:satellite-03" class="size-12 p-2 bg-blue-500 rounded-sm"/>
         {/if}
         <div class="flex flex-col gap-2">
           <div class="flex flex-col">
@@ -100,11 +100,11 @@
     <!-- List -->
     {:else if AppBskyGraphDefs.isListView(embed.record)}
       <!-- TODO: link to List page /p/<handle>/l/<record_id> -->
-      <div class="border rounded flex p-3 gap-4">
+      <div class="border rounded-sm flex p-3 gap-4">
         {#if embed.record.avatar}
           <img src={embed.record.avatar} class="size-8" alt={`${embed.record.displayName} feed`} />
         {:else}
-          <Icon icon="hugeicons:satellite-03" class="size-12 p-2 bg-blue-500 rounded"/>
+          <Icon icon="hugeicons:satellite-03" class="size-12 p-2 bg-blue-500 rounded-sm"/>
         {/if}
         <div class="flex flex-col gap-2">
           <div class="flex flex-col">
@@ -122,11 +122,11 @@
     <!-- Starter Pack -->
     {:else if AppBskyGraphDefs.isStarterPackViewBasic(embed.record)}
       <!-- TODO: link to Starter Pack page /p/<handle>/sp/<record_id> -->
-      <div class="border rounded flex flex-col gap-2">
+      <div class="border rounded-sm flex flex-col gap-2">
         <img 
           src={getStarterPackOgCard(embed.record)} 
           alt={`${embed.record.record.name} starter pack OG image`} 
-          class="rounded shadow-md shadow-slate-900"
+          class="rounded-sm shadow-md shadow-slate-900"
         />
 
         <div class="flex flex-col p-3">
@@ -140,7 +140,7 @@
     {/if}
   {:else}
     <!-- Unsupported Embed -->
-    <div class="text-xs border rounded px-3 py-2 flex items-center gap-2">
+    <div class="text-xs border rounded-sm px-3 py-2 flex items-center gap-2">
       <Icon icon="material-symbols:info-outline" class="text-lg" />
       <p>This embed is not supported yet.</p>
       <code>{embed.$type}</code> 
@@ -150,13 +150,13 @@
 
 
 {#snippet quotePost(record: ViewRecord)}
-  <article class="border p-3 rounded flex flex-col gap-4">
+  <article class="border p-3 rounded-sm flex flex-col gap-4">
     <div class="flex items-center justify-between w-full">
       <a href={`/p/${(record.author as ProfileViewBasic).handle}`} class="text-sm hover:underline flex gap-2 items-center">
         <img 
           src={(record.author as ProfileViewBasic).avatar} 
           alt={`${(record.author as ProfileViewBasic).handle} profile picture`} 
-          class="size-8 rounded"
+          class="size-8 rounded-sm"
         />
         <div class="flex flex-col">
           <p class="flex gap-1 items-center">

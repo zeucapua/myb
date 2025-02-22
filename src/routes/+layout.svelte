@@ -49,7 +49,7 @@
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
-  <div class="font-switzer relative w-full h-full min-w-screen min-h-screen bg-slate-800 text-white pt-4 pb-8">
+  <div class="font-switzer relative w-screen h-full min-h-screen bg-slate-800 text-white pt-4 pb-8">
     <Toaster />
     <main class="flex flex-col gap-4 p-6 pb-16">
       <nav class="flex gap-4 justify-between items-center">
@@ -61,11 +61,11 @@
           {#if user}
             <form action="/?/logout" method="POST" class="flex gap-4">
               <a href={`/p/${user.handle}`} data-sveltekit-reload>
-                <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded" />
+                <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded-sm" />
               </a>
               <button 
                 type="submit" 
-                class="border rounded px-4 py-2"
+                class="border rounded-sm px-4 py-2"
               >
                 Logout
               </button>
@@ -78,12 +78,12 @@
                   name="handle" 
                   placeholder="zeu.dev" 
                   bind:value={handleInput}
-                  class="border rounded px-4 py-2 bg-transparent max-w-32 h-fit" 
+                  class="border rounded-sm px-4 py-2 bg-transparent max-w-32 h-fit" 
                 />
                 <button 
                   type="submit" 
                   disabled={!handleInput}
-                  class="border rounded px-4 py-2"
+                  class="border rounded-sm px-4 py-2"
                 >
                   Login
                 </button>
