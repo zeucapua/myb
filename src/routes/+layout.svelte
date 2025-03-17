@@ -10,9 +10,11 @@
   import IconDrawer from '$lib/components/IconDrawer.svelte';
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
+  import { outerWidth } from 'svelte/reactivity/window';
 
 	let { data, children } = $props();
   const user = data.user as ProfileViewDetailed;
+  let isMobile = $derived((outerWidth.current ?? 0) < 640);
 
   // for individual pages/layouts to implement in context controls
   let bottomControls = $state<Snippet[]>([]);
@@ -49,14 +51,32 @@
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
-  <div class="font-switzer relative w-screen h-full min-h-screen bg-slate-800 text-white pt-4 pb-8">
+  <div class="font-switzer relative w-screen h-screen bg-slate-800 text-white">
     <Toaster />
-    <main class="flex flex-col gap-4 p-6 pb-16">
-      <nav class="flex gap-4 justify-between items-center">
-        <a href="/" class="font-bold text-xl flex gap-2">
-          <Icon icon="game-icons:butterfly-warning" class="size-8" />
-          myb
-        </a>
+    <main class="relative grid grid-cols-1 md:grid-cols-12 gap-4 max-h-screen overflow-scroll">
+      <nav class="sticky top-0 bg-slate-800 shadow md:col-span-1 p-4 py-8 flex md:flex-col gap-4 justify-between items-center">
+        <div class="flex md:flex-col gap-8">
+          <a href="/" class="font-bold text-xl flex gap-2">
+            <Icon icon="game-icons:butterfly-warning" class="size-8" />
+            {#if !isMobile}myb{/if}
+          </a>
+          <a href="/search">
+            <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
+          </a>
+          {#if user}
+            <a href="/bookmarks">
+              <Icon icon="hugeicons:all-bookmark" class="size-8" />
+            </a>
+          {:else}
+            <button
+              onclick={() => {
+                toastError("Log in to see bookmarks");
+              }}
+            >
+              <Icon icon="hugeicons:all-bookmark" class="size-8" />
+            </button>
+          {/if}
+        </div>
         <div class="flex gap-4 items-center">
           {#if user}
             <form action="/?/logout" method="POST" class="flex gap-4">
@@ -100,8 +120,10 @@
           {/if}
         </div>
       </nav>
-
-      {@render children()}
+      
+      <section class="w-screen md:w-full h-full max-h-screen md:col-span-11">
+        {@render children()}
+      </section>
     </main>
 
     {#snippet PostDrawerTrigger()}
@@ -126,39 +148,25 @@
       </IconDrawer>
     {/if}
 
-    <menu class="z-10 flex flex-col gap-4 items-end fixed bottom-0 inset-x-0"> 
-      <section class="flex w-full h-fit p-4 border-t justify-between bg-slate-800">
-        <div class="w-fit flex gap-4 items-center">
-          <a href="/search">
-            <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
-          </a>
-          {#if user}
-            <a href="/bookmarks">
-              <Icon icon="hugeicons:all-bookmark" class="size-8" />
+    {#if isMobile}
+      <menu class="z-10 flex flex-col gap-4 items-end fixed bottom-0 inset-x-0"> 
+        <section class="flex w-full h-fit p-4 border-t justify-between bg-slate-800">
+          <div class="flex gap-4 self-end items-center">
+            {#if bottomControls.length > 0}
+              {#each bottomControls as controller: Snippet}
+                {@render controller()}
+              {/each}
+            {/if}
+          </div>
+
+          <div class="w-fit flex gap-4 items-center">
+            <a href="/">
+              <Icon icon="iconamoon:home-light" class="size-8" />
             </a>
-          {:else}
-            <button
-              onclick={() => {
-                toastError("Log in to see bookmarks");
-              }}
-            >
-              <Icon icon="hugeicons:all-bookmark" class="size-8" />
-            </button>
-          {/if}
-          <a href="/">
-            <Icon icon="iconamoon:home-light" class="size-8" />
-          </a>
 
-        </div>
-
-        <div class="flex gap-4 self-end items-center">
-          {#if bottomControls.length > 0}
-            {#each bottomControls as controller: Snippet}
-              {@render controller()}
-            {/each}
-          {/if}
-        </div>
-      </section>
-    </menu>
+          </div>
+        </section>
+      </menu>
+    {/if}
   </div>
 </QueryClientProvider>

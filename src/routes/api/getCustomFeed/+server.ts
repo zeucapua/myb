@@ -13,12 +13,13 @@ export const GET: RequestHandler = async ({ url, locals }) => {
   const queryParams = url.searchParams;
   const feed = queryParams.get("feed");
   const limit = Number(queryParams.get("limit")) || 10;
+  const cursor = queryParams.get("cursor") || undefined;
 
   if (!feed) {
     return error(500, "Feed URI not given");
   }
 
-  const { data } = await agent.app.bsky.feed.getFeed({ feed, limit });
+  const { data } = await agent.app.bsky.feed.getFeed({ feed, limit, cursor });
 
   for (const post of data.feed) {
     // @ts-ignore

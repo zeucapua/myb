@@ -24,6 +24,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     const user = await agent.getProfile({ actor: decrypted });
     event.locals.user = user.data;
+    const preferences = await agent.getPreferences();
+    event.locals.preferences = preferences;
+
 
     const bookmarks = await db.query.Bookmark.findMany({
       where: eq(schema.Bookmark.authorDid, user.data.did)
