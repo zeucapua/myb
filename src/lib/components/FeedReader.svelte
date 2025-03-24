@@ -69,7 +69,7 @@
   });
 </script>
 
-<section class="flex flex-col gap-4 items-center w-full max-w-2xl self-center">
+<section class="flex flex-col gap-4 items-center w-full h-screen overflow-scroll max-w-2xl self-center">
   {#if $feedQuery.isLoading || $feedQuery.isRefetching}
     <p>Loading...</p>
   {:else if $feedQuery.isError}

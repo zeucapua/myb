@@ -45,7 +45,7 @@
 {/snippet}
 
 
-<ol class="relative flex flex-col h-full max-h-screen overflow-scroll max-w-screen md:max-w-3xl divide-y divide-slate-700">
+<ol class="relative flex flex-col h-full max-w-screen md:max-w-3xl divide-y divide-slate-700">
   {#if !isMobile}
     <section class="sticky top-0 bg-slate-800 py-2">
       {@render postToggles()}

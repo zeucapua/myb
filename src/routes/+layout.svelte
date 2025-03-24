@@ -51,10 +51,10 @@
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
-  <div class="font-switzer relative w-screen h-screen bg-slate-800 text-white">
+  <div class="font-switzer relative w-screen h-screen bg-slate-800 text-white overflow-clip">
     <Toaster />
-    <main class="relative grid grid-cols-1 md:grid-cols-12 gap-4 max-h-screen overflow-scroll">
-      <nav class="sticky top-0 bg-slate-800 shadow md:col-span-1 p-4 py-8 flex md:flex-col gap-4 justify-between items-center">
+    <main class="relative grid grid-cols-1 md:grid-cols-12 gap-4 h-full overflow-scroll">
+      <nav class="sticky top-0 bg-slate-800 shadow md:col-span-2 p-4 md:py-8 flex md:flex-col gap-4 justify-between items-center">
         <div class="flex md:flex-col gap-8">
           <a href="/" class="font-bold text-xl flex gap-2">
             <Icon icon="game-icons:butterfly-warning" class="size-8" />
@@ -91,8 +91,8 @@
               </button>
             </form>
           {:else}
-            <form action="/?/login" method="POST" class="flex flex-col gap-2 items-end"> 
-              <div class="flex gap-2">
+            <form action="/?/login" method="POST" class="flex flex-col p-4 gap-2 items-end"> 
+              <div class="flex md:flex-col gap-2">
                 <input 
                   type="text" 
                   name="handle" 
@@ -121,7 +121,7 @@
         </div>
       </nav>
       
-      <section class="w-screen md:w-full h-full max-h-screen md:col-span-11">
+      <section class="w-screen md:w-full h-full max-h-screen md:col-span-10">
         {@render children()}
       </section>
     </main>
