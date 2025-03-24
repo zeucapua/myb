@@ -2,11 +2,10 @@ import { db } from "$lib/server/db";
 import * as schema from "$lib/schema";
 import { and, eq } from "drizzle-orm";
 import { atclient } from "$lib/server/client";
-import { ensureValidAtUri, isValidHandle } from "@atproto/syntax";
-import type { PageServerLoadEvent } from "./$types";
-import { parseAtUri, renderTextToMarkdownToHTML } from "$lib/utils";
+import { isValidHandle } from "@atproto/syntax";
+import { renderTextToMarkdownToHTML } from "$lib/utils";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
-import { Agent, RichText, savedFeedsToUriArrays, type BskyPreferences } from "@atproto/api";
+import { Agent, RichText } from "@atproto/api";
 
 export const actions: Actions = {
   "login": async ({ cookies, request }) => {

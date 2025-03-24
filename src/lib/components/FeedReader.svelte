@@ -1,28 +1,32 @@
 <script lang="ts">
+	import { untrack } from "svelte";
   import FeedTimeline from "./FeedTimeline.svelte";
-  import { createInfiniteQuery, useQueryClient } from "@tanstack/svelte-query";
+  import { createInfiniteQuery } from "@tanstack/svelte-query";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
-    import { untrack } from "svelte";
 
   // default feed is discover
-  let { feedUri = $bindable<string>("at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot") } = $props();
+  let {
+		feedUri = $bindable<string>(
+			"at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot"
+		)
+	} = $props();
 
   const feedQuery = createInfiniteQuery({
     queryKey: ["feedQuery", feedUri],
     queryFn: async ({ pageParam }) => {
+      const queryParams = new URLSearchParams();
+      if (pageParam) { queryParams.set("cursor", pageParam); }
+
       if (feedUri === "following") {
-        const response = await fetch("/api/getFollowingFeed");
+        const response = await fetch(`/api/getFollowingFeed?${queryParams.toString()}`);
         const results = await response.json() as { feed: FeedViewPost[], nextCursor: string };
         return results;
       }
 
-      const queryParams = new URLSearchParams();
       queryParams.set(
         "feed",
         feedUri
       );
-      console.log({ pageParam });
-      if (pageParam) { queryParams.set("cursor", pageParam); }
 
       const response = await fetch(`/api/getCustomFeed?${queryParams.toString()}`);
       const results = await response.json() as { feed: FeedViewPost[], nextCursor: string };
@@ -31,7 +35,7 @@
     initialPageParam: "",
 
     // @ts-ignore
-    getNextPageParam: (last) => last.nextCursor
+    getNextPageParam: (lastPage) => lastPage.nextCursor
   });
 
   let feed = $derived.by(() => {
@@ -74,20 +78,21 @@
   {:else if $feedQuery.isError}
     <p>Error</p>
   {:else if $feedQuery.isSuccess}
-    <FeedTimeline {feed} />
-    <button
-      bind:this={loadButton}
-      onclick={() => {
-        $feedQuery.fetchNextPage();
-      }}
-      disabled={$feedQuery.isFetchingNextPage}
-      class="px-4 py-2 border rounded-sm"
-    >
-      {#if $feedQuery.isFetchingNextPage}
-        Loading...
-      {:else}
-        Load more...
-      {/if}
-    </button>
+    <FeedTimeline {feed}>
+			<button
+				bind:this={loadButton}
+				onclick={() => {
+					$feedQuery.fetchNextPage();
+				}}
+				disabled={$feedQuery.isFetchingNextPage}
+				class="px-4 py-2 border rounded-sm"
+			>
+				{#if $feedQuery.isFetchingNextPage}
+					Loading...
+				{:else}
+					Load more...
+				{/if}
+			</button>
+    </FeedTimeline>
   {/if}
 </section>

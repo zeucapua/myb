@@ -7,12 +7,11 @@
     import { outerWidth } from 'svelte/reactivity/window';
 
   type Props = {
-    feed: FeedViewPost[]
+    feed: FeedViewPost[];
+		children?: Snippet;
   }
 
-  type FeedPost = FeedViewPost & { html: string };
-  
-  let { feed }: Props = $props();
+  let { feed, children }: Props = $props();
 
   let showReposts = $state(true);
   let showReplies = $state(true);
@@ -29,13 +28,13 @@
 
 {#snippet postToggles()}
   <menu class="flex gap-4 items-center">
-    <Toggle.Root 
+    <Toggle.Root
       bind:pressed={showReplies}
       class="inline-flex size-10 items-center justify-center rounded-[9px] transition-all hover:bg-white/5 active:scale-95 active:bg-dark-10 data-[state=on]:bg-white/5 data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
     >
       <Icon icon="ri:reply-fill" />
     </Toggle.Root>
-    <Toggle.Root 
+    <Toggle.Root
       bind:pressed={showReposts}
       class="inline-flex size-10 items-center justify-center rounded-[9px] transition-all hover:bg-white/5 active:scale-95 active:bg-dark-10 data-[state=on]:bg-white/5 data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
     >
@@ -58,4 +57,6 @@
       </li>
     {/if}
   {/each}
+
+	{@render children?.()}
 </ol>
