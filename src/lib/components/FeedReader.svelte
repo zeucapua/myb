@@ -11,14 +11,14 @@
     queryKey: ["feedQuery", feedUri],
     queryFn: async ({ pageParam }) => {
       if (feedUri === "following") {
-        const response = await fetch("/api/getFollowingFeed");   
+        const response = await fetch("/api/getFollowingFeed");
         const results = await response.json() as { feed: FeedViewPost[], nextCursor: string };
         return results;
       }
 
       const queryParams = new URLSearchParams();
       queryParams.set(
-        "feed", 
+        "feed",
         feedUri
       );
       console.log({ pageParam });
@@ -40,7 +40,6 @@
 
   $effect(() => {
     if (feedUri) {
-      console.log("updated feedUri", feedUri);
       untrack(() => $feedQuery.refetch());
     }
   })
@@ -54,15 +53,15 @@
     if (window && window.IntersectionObserver) {
       observer = new IntersectionObserver((entries) => {
         entries.map((entry) => {
-          if (entry.isIntersecting || $feedQuery.isLoading) { 
-            $feedQuery.fetchNextPage(); 
+          if (entry.isIntersecting || $feedQuery.isLoading) {
+            $feedQuery.fetchNextPage();
           }
         });
       });
     }
   });
 
-  $effect(() => { 
+  $effect(() => {
     if (loadButton && observer) {
       observer.observe(loadButton);
     }
@@ -76,10 +75,10 @@
     <p>Error</p>
   {:else if $feedQuery.isSuccess}
     <FeedTimeline {feed} />
-    <button 
+    <button
       bind:this={loadButton}
-      onclick={() => { 
-        $feedQuery.fetchNextPage(); 
+      onclick={() => {
+        $feedQuery.fetchNextPage();
       }}
       disabled={$feedQuery.isFetchingNextPage}
       class="px-4 py-2 border rounded-sm"

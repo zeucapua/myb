@@ -3,12 +3,12 @@
   import PostEmbed from "./PostEmbed.svelte";
   import HlsPlayerEmbed from "./HlsPlayerEmbed.svelte";
   import { formatDistanceToNowStrict } from "date-fns";
-  import { 
-    AppBskyEmbedExternal, 
-    AppBskyEmbedImages, 
-    AppBskyEmbedRecord, 
-    AppBskyEmbedRecordWithMedia, 
-    AppBskyEmbedVideo, 
+  import {
+    AppBskyEmbedExternal,
+    AppBskyEmbedImages,
+    AppBskyEmbedRecord,
+    AppBskyEmbedRecordWithMedia,
+    AppBskyEmbedVideo,
     AppBskyFeedDefs,
     AppBskyGraphDefs,
     AtUri,
@@ -33,18 +33,16 @@
   ) {
     if (typeof didOrStarterPack === 'string') {
       return `https://ogcard.cdn.bsky.app/start/${didOrStarterPack}/${rkey}`
-    } 
+    }
     else {
       const rkey = new AtUri(didOrStarterPack.uri).rkey
       return `https://ogcard.cdn.bsky.app/start/${didOrStarterPack.creator.did}/${rkey}`
     }
   }
-
-  console.log({ embed });
 </script>
 
 <!-- Images -->
-{#if AppBskyEmbedImages.isView(embed)} 
+{#if AppBskyEmbedImages.isView(embed)}
   {#each (embed.images) as image}
     <img src={image.fullsize} alt={image.alt} />
   {/each}
@@ -55,7 +53,7 @@
     {#if embed.external.uri.includes("media.tenor.com") || embed.external.uri.includes("i.giphy.com")}
       <img src={embed.external.uri} alt={embed.external.description} />
     {:else if embed.external.uri.includes("youtu.be")}
-      <YoutubePlayerEmbed {embed} /> 
+      <YoutubePlayerEmbed {embed} />
     {:else}
       <div class="flex flex-col rounded-sm border">
         <img src={embed.external.thumb} alt={embed.external.description} class="w-full h-full aspect-[1.91/1] object-cover" />
@@ -76,7 +74,7 @@
   {#if AppBskyEmbedRecordWithMedia.isView(embed)}
     <PostEmbed embed={embed.media} /> <!-- Author embeds -->
     {@render quotePost(embed.record.record as ViewRecord)}
-    
+
   <!-- Bsky Record (quote, starter pack, list) -->
   {:else if AppBskyEmbedRecord.isView(embed)}
     <!-- Feed -->
@@ -113,7 +111,7 @@
           </div>
           <p class="text-xs">{embed.record.description}</p>
           <div class="flex items-center text-sm gap-2">
-            <Icon icon="bi:people-fill" /> 
+            <Icon icon="bi:people-fill" />
             <p>{embed.record.listItemCount} {embed.record.listItemCount === 1 ? "person" : "people"}</p>
           </div>
         </div>
@@ -123,9 +121,9 @@
     {:else if AppBskyGraphDefs.isStarterPackViewBasic(embed.record)}
       <!-- TODO: link to Starter Pack page /p/<handle>/sp/<record_id> -->
       <div class="border rounded-sm flex flex-col gap-2">
-        <img 
-          src={getStarterPackOgCard(embed.record)} 
-          alt={`${embed.record.record.name} starter pack OG image`} 
+        <img
+          src={getStarterPackOgCard(embed.record)}
+          alt={`${embed.record.record.name} starter pack OG image`}
           class="rounded-sm shadow-md shadow-slate-900"
         />
 
@@ -143,7 +141,7 @@
     <div class="text-xs border rounded-sm px-3 py-2 flex items-center gap-2">
       <Icon icon="material-symbols:info-outline" class="text-lg" />
       <p>This embed is not supported yet.</p>
-      <code>{embed.$type}</code> 
+      <code>{embed.$type}</code>
     </div>
   {/if}
 {/if}
@@ -153,14 +151,14 @@
   <article class="border p-3 rounded-sm flex flex-col gap-4">
     <div class="flex items-center justify-between w-full">
       <a href={`/p/${(record.author as ProfileViewBasic).handle}`} class="text-sm hover:underline flex gap-2 items-center">
-        <img 
-          src={(record.author as ProfileViewBasic).avatar} 
-          alt={`${(record.author as ProfileViewBasic).handle} profile picture`} 
+        <img
+          src={(record.author as ProfileViewBasic).avatar}
+          alt={`${(record.author as ProfileViewBasic).handle} profile picture`}
           class="size-8 rounded-sm"
         />
         <div class="flex flex-col">
           <p class="flex gap-1 items-center">
-            {(record.author as ProfileViewBasic).displayName} 
+            {(record.author as ProfileViewBasic).displayName}
             <span class="text-xs">@{(record.author as ProfileViewBasic).handle}</span>
           </p>
           <time class="text-xs font-light">
@@ -173,7 +171,7 @@
     <div class="prose prose-invert prose-pink text-xs text-white">
       {@html record.html}
     </div>
-    
+
     {#if record.embeds}
       {#each record.embeds as embed}
         <PostEmbed {embed} disableQuotes />

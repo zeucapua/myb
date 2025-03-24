@@ -9,8 +9,8 @@
   let user = data.user;
   let pinnedFeeds = data.pinnedFeeds;
 
-  let selectedFeed = $state(user ? 
-    { value: "following", label: "Following" } 
+  let selectedFeed = $state(user ?
+    { value: "following", label: "Following" }
     : { value: "at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot", label: "Discovery" }
   );
   let setBottomControls = getContext("setBottomControls") as (snippet: Snippet) => void;

@@ -8,36 +8,12 @@ import { parseAtUri, renderTextToMarkdownToHTML } from "$lib/utils";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
 import { Agent, RichText, savedFeedsToUriArrays, type BskyPreferences } from "@atproto/api";
 
-export async function load({ locals }: PageServerLoadEvent) {
-  let agent = locals.agent;
-  let preferences = locals.preferences as BskyPreferences;
-  
-  let pinnedFeeds = [] as { value: string, label: string }[];
-  if (preferences) {
-    // TODO: implement feeds in user database
-    let { pinned, saved } = savedFeedsToUriArrays(preferences.savedFeeds);
-    for (const uri of pinned) {
-      if (!Object.values(parseAtUri(uri)).includes(undefined)) {
-        const generator = await agent!.app.bsky.feed.getFeedGenerator({ feed: uri });
-        if (generator.data.isValid && generator.data.isOnline) {
-          pinnedFeeds.push({
-            value: uri,
-            label: generator.data.view.displayName
-          });
-        }
-      }
-    }
-  }
-
-  return { pinnedFeeds };
-}
-
 export const actions: Actions = {
   "login": async ({ cookies, request }) => {
     const formData = await request.formData();
     const handle = formData.get("handle") as string;
     if (!isValidHandle(handle)) { error(400, { message: "invalid handle" }); }
-    const stayLoggedIn = (formData.get("stay_logged_in") as string) === "on"; 
+    const stayLoggedIn = (formData.get("stay_logged_in") as string) === "on";
     cookies.set("stayLoggedIn", stayLoggedIn.toString(), { path: "/", maxAge: 60 });
 
     const url = await atclient.authorize(handle, { scope: "atproto transition:generic" });
@@ -98,14 +74,14 @@ export const actions: Actions = {
             cid: root_cid,
             uri: root_uri
           },
-          parent: { 
+          parent: {
             cid: parent_cid,
-            uri: parent_uri 
+            uri: parent_uri
           }
         }
       });
 
-      const newReply = await locals.agent.getPostThread({  
+      const newReply = await locals.agent.getPostThread({
         uri: reply.uri
       });
 
@@ -140,7 +116,7 @@ export const actions: Actions = {
     const content = formData.get("content") as string;
     try {
       await db.insert(schema.DraftPost)
-        .values({ 
+        .values({
           id: crypto.randomUUID(),
           authorDid: locals.user.did,
           content
@@ -153,7 +129,7 @@ export const actions: Actions = {
     catch (e) {
       return fail(500);
     }
-    
+
   },
   "deleteDraft": async ({ url, request }) => {
     const formData = await request.formData();
@@ -179,7 +155,7 @@ export const actions: Actions = {
         return { message: "liked", uri, likeUri: newLikeUri }
       }
       else {
-        await agent.deleteLike(likeUri); 
+        await agent.deleteLike(likeUri);
         return { message: "unliked", uri, likeUri: "" }
       }
     }
@@ -197,14 +173,14 @@ export const actions: Actions = {
         return { message: "reposted", uri, repostUri: newRepostUri }
       }
       else {
-        await agent.deleteRepost(repostUri); 
+        await agent.deleteRepost(repostUri);
         return { message: "unrepost", uri, repostUri: "" }
       }
     }
   },
   "bookmarkPost": async ({ request, locals }) => {
     if (!locals.user) {
-      return fail(401); 
+      return fail(401);
     }
 
     const formData = await request.formData();
@@ -213,7 +189,7 @@ export const actions: Actions = {
 
     if (isBookmarked === "false") {
       const bookmark = await db.insert(schema.Bookmark)
-        .values({ 
+        .values({
           id: crypto.randomUUID(),
           uri,
           authorDid: locals.user.did,
@@ -233,6 +209,6 @@ export const actions: Actions = {
       locals.bookmarks.delete(removed[0].uri ?? "");
       return { message: "unbookmarked", uri };
     }
-    
+
   }
 };
