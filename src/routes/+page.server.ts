@@ -3,9 +3,35 @@ import * as schema from "$lib/schema";
 import { and, eq } from "drizzle-orm";
 import { atclient } from "$lib/server/client";
 import { isValidHandle } from "@atproto/syntax";
-import { renderTextToMarkdownToHTML } from "$lib/utils";
+import { parseAtUri, renderTextToMarkdownToHTML } from "$lib/utils";
 import { error, fail, redirect, type Actions } from "@sveltejs/kit";
-import { Agent, RichText } from "@atproto/api";
+import { Agent, RichText, savedFeedsToUriArrays, type BskyPreferences } from "@atproto/api";
+import type { PageServerLoadEvent } from "./$types";
+
+export async function load({ locals }: PageServerLoadEvent) {
+  let agent = locals.agent;
+  let preferences = locals.preferences as BskyPreferences;
+
+  let pinnedFeeds = [] as { value: string, label: string }[];
+  if (preferences) {
+    // TODO: implement feeds in user database
+    let { pinned, saved } = savedFeedsToUriArrays(preferences.savedFeeds);
+    for (const uri of pinned) {
+      if (!Object.values(parseAtUri(uri)).includes(undefined)) {
+        const generator = await agent!.app.bsky.feed.getFeedGenerator({ feed: uri });
+        if (generator.data.isValid && generator.data.isOnline) {
+          pinnedFeeds.push({
+            value: uri,
+            label: generator.data.view.displayName
+          });
+        }
+      }
+    }
+  };
+
+  return { pinnedFeeds };
+}
+
 
 export const actions: Actions = {
   "login": async ({ cookies, request }) => {

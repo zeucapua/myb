@@ -42,18 +42,18 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="viewport-fit=cover, user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-  <script 
-    defer 
-    data-site-id="myb.zeu.dev" 
+  <script
+    defer
+    data-site-id="myb.zeu.dev"
     src="https://assets.onedollarstats.com/tracker.js"
-  > 
+  >
   </script>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
   <div class="font-switzer relative w-screen h-screen bg-slate-800 text-white overflow-clip">
     <Toaster />
-    <main class="relative grid grid-cols-1 md:grid-cols-12 gap-4 h-full overflow-scroll">
+    <main class={[!isMobile && "gap-4", "relative grid grid-cols-1 md:grid-cols-12"]}>
       <nav class="sticky top-0 bg-slate-800 shadow md:col-span-2 p-4 md:py-8 flex md:flex-col gap-4 justify-between items-center">
         <div class="flex md:flex-col gap-8">
           <a href="/" class="font-bold text-xl flex gap-2">
@@ -83,25 +83,25 @@
               <a href={`/p/${user.handle}`} data-sveltekit-reload>
                 <img src={user.avatar} alt={`${user.handle} profile picture`} class="size-10 rounded-sm" />
               </a>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 class="border rounded-sm px-4 py-2"
               >
                 Logout
               </button>
             </form>
           {:else}
-            <form action="/?/login" method="POST" class="flex flex-col p-4 gap-2 items-end"> 
+            <form action="/?/login" method="POST" class="flex flex-col p-4 gap-2 items-end">
               <div class="flex md:flex-col gap-2">
-                <input 
-                  type="text" 
-                  name="handle" 
-                  placeholder="zeu.dev" 
+                <input
+                  type="text"
+                  name="handle"
+                  placeholder="zeu.dev"
                   bind:value={handleInput}
-                  class="border rounded-sm px-4 py-2 bg-transparent max-w-32 h-fit" 
+                  class="border rounded-sm px-4 py-2 bg-transparent max-w-32 h-fit"
                 />
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={!handleInput}
                   class="border rounded-sm px-4 py-2"
                 >
@@ -120,7 +120,7 @@
           {/if}
         </div>
       </nav>
-      
+
       <section class="w-screen md:w-full h-full max-h-screen md:col-span-10">
         {@render children()}
       </section>
@@ -128,8 +128,8 @@
 
     {#snippet PostDrawerTrigger()}
       <Button.Root
-        onclick={() => { 
-          if (!user) { toastError("Must be logged in to post"); } 
+        onclick={() => {
+          if (!user) { toastError("Must be logged in to post"); }
         }}
         class="fixed bottom-20 right-4 z-50 rounded-full flex items-center bg-pink-500 p-4 w-fit gap-4 hover:bg-pink-600/95 active:scale-95 active:transition-all duration-150"
       >
@@ -146,27 +146,6 @@
           <Drafter />
         {/snippet}
       </IconDrawer>
-    {/if}
-
-    {#if isMobile}
-      <menu class="z-10 flex flex-col gap-4 items-end fixed bottom-0 inset-x-0"> 
-        <section class="flex w-full h-fit p-4 border-t justify-between bg-slate-800">
-          <div class="flex gap-4 self-end items-center">
-            {#if bottomControls.length > 0}
-              {#each bottomControls as controller: Snippet}
-                {@render controller()}
-              {/each}
-            {/if}
-          </div>
-
-          <div class="w-fit flex gap-4 items-center">
-            <a href="/">
-              <Icon icon="iconamoon:home-light" class="size-8" />
-            </a>
-
-          </div>
-        </section>
-      </menu>
     {/if}
   </div>
 </QueryClientProvider>
