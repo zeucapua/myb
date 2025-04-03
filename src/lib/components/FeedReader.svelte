@@ -3,21 +3,22 @@
 	import { untrack } from "svelte";
 	import Icon from "@iconify/svelte";
   import FeedTimeline from "./FeedTimeline.svelte";
-	import { outerWidth } from "svelte/reactivity/window";
+	import { feedReaders, isMobile } from "$lib/stores.svelte";
   import { createInfiniteQuery } from "@tanstack/svelte-query";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+	import { DISCOVERY_FEED_ITEM } from "$lib/utils";
 
-  let isMobile = $derived((outerWidth.current ?? 0) < 640);
+	type FeedItem = { value: string, label: string };
 
-	let { feeds }: { feeds: { value: string, label: string }[] }  = $props();
-	let selectedFeed = $state("at://did:plc:z72i7hdynmk6r22z27h6tvur/app.bsky.feed.generator/whats-hot")
+	let { index, initialFeed, feeds }: { index?: number, initialFeed?: FeedItem, feeds: FeedItem[] }  = $props();
+	let selectedFeed = $state(initialFeed?.value ?? DISCOVERY_FEED_ITEM.value);
 	let selectedFeedLabel = $derived(feeds.find((f) => f.value === selectedFeed)?.label);
 
 	let showReplies = $state(true);
 	let showReposts = $state(true);
 
   const feedQuery = createInfiniteQuery({
-    queryKey: ["feedQuery", () => selectedFeed],
+    queryKey: ["feedQuery", selectedFeed],
     queryFn: async ({ pageParam }) => {
       const queryParams = new URLSearchParams();
       if (pageParam) { queryParams.set("cursor", pageParam); }
@@ -50,10 +51,14 @@
   $effect(() => {
     if (selectedFeed) {
       untrack(() => $feedQuery.refetch());
+			untrack(() => {
+				if (index) {
+					feedReaders.value[index] = { value: selectedFeed, label: selectedFeedLabel ?? "" };
+					feedReaders.update();
+				}
+			});
     }
   })
-
-  $inspect($feedQuery);
 
   let loadButton = $state<HTMLButtonElement>();
   let observer = $state<IntersectionObserver>();
@@ -77,7 +82,7 @@
   });
 </script>
 
-<section class={[isMobile && "max-h-[90%]", "relative flex flex-col gap-4 items-center w-full h-screen overflow-y-scroll overflow-x-clip max-w-2xl self-center"]}>
+<section class={[isMobile() && "max-h-[90%]", "relative flex flex-col gap-4 items-center w-full h-screen overflow-y-scroll overflow-x-clip max-w-2xl self-center"]}>
 	<menu class="sticky top-0 w-full flex gap-4 justify-between bg-slate-800 px-4 py-2 z-50">
 		<Select.Root type="single" bind:value={selectedFeed} items={feeds}>
 			<Select.Trigger>

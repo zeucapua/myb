@@ -5,16 +5,15 @@
   import { toastError } from "$lib/utils";
   import { browser } from '$app/environment';
   import { Toaster } from 'svelte-french-toast';
+	import { isMobile } from "$lib/stores.svelte";
   import { setContext, type Snippet } from 'svelte';
   import Drafter from '$lib/components/Drafter.svelte';
   import IconDrawer from '$lib/components/IconDrawer.svelte';
   import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
   import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
-  import { outerWidth } from 'svelte/reactivity/window';
 
 	let { data, children } = $props();
   const user = data.user as ProfileViewDetailed;
-  let isMobile = $derived((outerWidth.current ?? 0) < 640);
 
   // for individual pages/layouts to implement in context controls
   let bottomControls = $state<Snippet[]>([]);
@@ -32,7 +31,6 @@
   });
 
   let handleInput = $state("");
-  let stayLoggedInChecked = $state(false);
 </script>
 
 <svelte:head>
@@ -53,12 +51,12 @@
 <QueryClientProvider client={queryClient}>
   <div class="font-switzer relative w-screen h-screen bg-slate-800 text-white overflow-clip">
     <Toaster />
-    <main class={[!isMobile && "gap-4", "relative grid grid-cols-1 md:grid-cols-12"]}>
+    <main class={[!isMobile() && "gap-4", "relative grid grid-cols-1 md:grid-cols-12"]}>
       <nav class="sticky top-0 bg-slate-800 shadow md:col-span-2 p-4 md:py-8 flex md:flex-col gap-4 justify-between items-center">
         <div class="flex md:flex-col gap-8">
           <a href="/" class="font-bold text-xl flex gap-2">
             <Icon icon="game-icons:butterfly-warning" class="size-8" />
-            {#if !isMobile}myb{/if}
+            {#if !isMobile()}myb{/if}
           </a>
           <a href="/search">
             <Icon icon="heroicons:magnifying-glass-solid" class="size-8" />
@@ -108,14 +106,6 @@
                   Login
                 </button>
               </div>
-              <label for="stay_logged_in">
-                <input
-                  type="checkbox"
-                  name="stay_logged_in"
-                  bind:checked={stayLoggedInChecked}
-                />
-                Stay Logged In
-              </label>
             </form>
           {/if}
         </div>

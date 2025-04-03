@@ -34,13 +34,10 @@ export async function load({ locals }: PageServerLoadEvent) {
 
 
 export const actions: Actions = {
-  "login": async ({ cookies, request }) => {
+  "login": async ({ request }) => {
     const formData = await request.formData();
     const handle = formData.get("handle") as string;
     if (!isValidHandle(handle)) { error(400, { message: "invalid handle" }); }
-    const stayLoggedIn = (formData.get("stay_logged_in") as string) === "on";
-    cookies.set("stayLoggedIn", stayLoggedIn.toString(), { path: "/", maxAge: 60 });
-
     const url = await atclient.authorize(handle, { scope: "atproto transition:generic" });
     if (!url) {
       error(500);
@@ -49,7 +46,6 @@ export const actions: Actions = {
   },
   "logout": async ({ cookies }) => {
     cookies.delete("sid", { path: "/" });
-    cookies.delete("stayLoggedIn", { path: "/" });
     redirect(301, "/");
   },
   "createPost": async ({ request, locals }) => {
