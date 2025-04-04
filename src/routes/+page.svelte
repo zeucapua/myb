@@ -21,7 +21,7 @@
 </script>
 
 {#if user}
-	<div class="flex gap-4 w-full overflow-x-scroll">
+	<div class="flex gap-4 w-full overflow-visible">
 		{#if isMobile()}
 			<FeedReader index={0} initialFeed={feedReaders.value[0]} {feeds} />
 		{:else}

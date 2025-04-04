@@ -111,7 +111,7 @@
         </div>
       </nav>
 
-      <section class="w-screen md:w-full h-full max-h-screen md:col-span-10">
+      <section class="w-screen md:w-full h-full max-h-screen md:col-span-10 md:overflow-x-scroll">
         {@render children()}
       </section>
     </main>
