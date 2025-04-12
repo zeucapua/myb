@@ -25,7 +25,7 @@
 		{#if isMobile()}
 			<FeedReader index={0} initialFeed={feedReaders.value[0]} {feeds} />
 		{:else}
-			{#each feedReaders.value as feed, i}
+			{#each feedReaders.value as feed, i (`feedReader_${i}`)}
 				<FeedReader index={i} initialFeed={feed} {feeds} />
 			{/each}
 			<Button.Root onclick={addFeedReader} class="self-center">

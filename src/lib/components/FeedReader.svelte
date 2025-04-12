@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { untrack } from "svelte";
 	import Icon from "@iconify/svelte";
-	import { DISCOVERY_FEED_ITEM } from "$lib/utils";
   import FeedTimeline from "./FeedTimeline.svelte";
+	import { DISCOVERY_FEED_ITEM } from "$lib/utils";
 	import { AlertDialog, Select, Toggle } from "bits-ui";
 	import { feedReaders, isMobile } from "$lib/stores.svelte";
   import { createInfiniteQuery } from "@tanstack/svelte-query";
@@ -25,7 +25,7 @@
 		isDeleteDialogOpen = false;
 	}
 
-  const feedQuery = createInfiniteQuery({
+  const feedQuery = $derived(createInfiniteQuery({
     queryKey: ["feedQuery", selectedFeed],
     queryFn: async ({ pageParam }) => {
       const queryParams = new URLSearchParams();
@@ -50,7 +50,7 @@
 
     // @ts-ignore
     getNextPageParam: (lastPage) => lastPage.nextCursor
-  });
+  }));
 
   let feed = $derived.by(() => {
     return $feedQuery.data?.pages.flatMap(page => page.feed) ?? []
@@ -88,6 +88,8 @@
       observer.observe(loadButton);
     }
   });
+
+	$inspect({ selectedFeed, index, feedReaders });
 </script>
 
 <section class={[isMobile() && "max-h-[90%]", "relative flex flex-col gap-4 items-center w-full h-screen overflow-y-scroll overflow-x-clip md:min-w-xl self-center"]}>
