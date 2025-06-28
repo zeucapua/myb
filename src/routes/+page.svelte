@@ -21,14 +21,14 @@
 </script>
 
 {#if user}
-	<div class="flex gap-4 w-full overflow-visible">
+	<div class="flex gap-4 w-full overflow-visible h-full">
 		{#if isMobile()}
 			<FeedReader index={0} initialFeed={feedReaders.value[0]} {feeds} />
 		{:else}
 			{#each feedReaders.value as feed, i (`feedReader_${i}`)}
 				<FeedReader index={i} initialFeed={feed} {feeds} />
 			{/each}
-			<Button.Root onclick={addFeedReader} class="self-center">
+			<Button.Root onclick={addFeedReader} class="self-center px-4 hover:cursor-pointer hover:bg-white/10 w-fit h-full rounded">
 				Add Feed Reader
 			</Button.Root>
 		{/if}

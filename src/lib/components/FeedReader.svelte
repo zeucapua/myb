@@ -3,7 +3,7 @@
 	import Icon from "@iconify/svelte";
   import FeedTimeline from "./FeedTimeline.svelte";
 	import { DISCOVERY_FEED_ITEM } from "$lib/utils";
-	import { AlertDialog, Select, Toggle } from "bits-ui";
+	import { AlertDialog, Button, Select, Toggle } from "bits-ui";
 	import { feedReaders, isMobile } from "$lib/stores.svelte";
   import { createInfiniteQuery } from "@tanstack/svelte-query";
   import type { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
@@ -95,17 +95,23 @@
 	<menu class="sticky top-0 w-full flex gap-4 justify-between bg-slate-800 px-4 py-2 z-50">
 		<Select.Root type="single" bind:value={selectedFeed} items={feeds}>
 			<Select.Trigger>
-				<p class="px-4 py-2 w-full max-w-xl border rounded overflow-ellipsis">{selectedFeedLabel}</p>
+				<Button.Root class="px-4 py-2 w-full max-w-xl border  rounded overflow-ellipsis">
+					{selectedFeedLabel}
+				</Button.Root>
 			</Select.Trigger>
 			<Select.Portal>
-				<Select.Content side="right" sideOffset={8} class="z-50">
-					<Select.Viewport class="flex flex-col gap-4">
+				<Select.Content side="right" sideOffset={8} class="z-50 my-2 bg-white rounded p-2">
+					<Select.Viewport class="flex flex-col">
 						{#each feeds as feed}
-							<Select.Item value={feed.value} label={feed.label}>
+							<Select.Item
+								value={feed.value}
+								label={feed.label}
+								class="flex items-center gap-2 p-3 hover:bg-slate-800/10 rounded hover:cursor-pointer"
+							>
+								<p>{feed.label}</p>
 								{#if selectedFeed === feed.value}
 									<Icon icon="ic:round-check" />
 								{/if}
-								<p>{feed.label}</p>
 							</Select.Item>
 						{/each}
 					</Select.Viewport>

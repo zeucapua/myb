@@ -36,7 +36,7 @@
 		"@oslojs/encoding": "^1.1.0",
 		"@tanstack/svelte-query": "^5.75.7",
 		"@upstash/qstash": "^2.8.1",
-		"bits-ui": "^1.4.8",
+		"bits-ui": "^2.8.10",
 		"drizzle-orm": "^0.33.0",
 		"hls.js": "^1.6.2",
 		"marked": "^14.1.4",
