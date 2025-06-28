@@ -1,7 +1,7 @@
 import { marked } from "marked";
 import { dev } from "$app/environment";
 import toast from "svelte-french-toast";
-import { Agent, RichText, type AtpBaseClient } from "@atproto/api";
+import { Agent, RichText, type AtpAgent } from "@atproto/api";
 import type { FeedViewPost, ThreadViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 
 export const DISCOVERY_FEED_ITEM = {
@@ -14,7 +14,7 @@ export const FOLLOWING_FEED_ITEM = {
 	label: "Following"
 };
 
-export async function renderTextToMarkdownToHTML(text: string, agent: Agent | AtpBaseClient) {
+export async function renderTextToMarkdownToHTML(text: string, agent: Agent | AtpAgent) {
   const rt = new RichText({ text });
   await rt.detectFacets(agent);
   let markdown = "";
@@ -24,12 +24,7 @@ export async function renderTextToMarkdownToHTML(text: string, agent: Agent | At
     }
     else if (segment.isMention()) {
       let profile;
-      if (agent instanceof Agent) {
         profile = await agent.getProfile({ actor: segment.mention?.did || "" });
-      }
-      else {
-        profile = await agent.app.bsky.actor.getProfile({ actor: segment.mention?.did || "" });
-      }
       markdown += `[${segment.text}](${dev ? "http://localhost:5173" : "https://myb.zeu.dev" }/p/${profile.data.handle})`
     }
     else {

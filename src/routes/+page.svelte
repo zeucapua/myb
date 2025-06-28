@@ -2,7 +2,7 @@
 	import { DISCOVERY_FEED_ITEM, FOLLOWING_FEED_ITEM } from "$lib/utils";
 	import { feedReaders, isMobile } from "$lib/stores.svelte";
   import FeedReader from "$lib/components/FeedReader.svelte";
-    import { Button } from "bits-ui";
+	import { Button } from "bits-ui";
 
   let { data } = $props();
 	let user = data.user;

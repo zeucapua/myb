@@ -27,6 +27,8 @@
 
   const feedQuery = $derived(createInfiniteQuery({
     queryKey: ["feedQuery", selectedFeed],
+		staleTime: 1_800_000,
+    initialPageParam: "",
     queryFn: async ({ pageParam }) => {
       const queryParams = new URLSearchParams();
       if (pageParam) { queryParams.set("cursor", pageParam); }
@@ -46,9 +48,6 @@
       const results = await response.json() as { feed: FeedViewPost[], nextCursor: string };
       return results;
     },
-    initialPageParam: "",
-
-    // @ts-ignore
     getNextPageParam: (lastPage) => lastPage.nextCursor
   }));
 
