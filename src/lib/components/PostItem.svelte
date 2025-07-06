@@ -13,7 +13,7 @@
 
   let { data, isBordered = false }: { data: FeedViewPost, isBordered?: boolean } = $props();
   const user = page.data.user as ProfileViewDetailed;
-  const bookmarks = page.data.bookmarks as Set<string>; 
+  const bookmarks = page.data.bookmarks as Set<string>;
   let isBookmarked = $state(bookmarks.has(data.post.uri) ?? false);
 
   let likes = $state(data.post.likeCount ?? 0);
@@ -30,14 +30,10 @@
 
 <AlertDialog.Root bind:open={isDeleteDialogOpen}>
   <AlertDialog.Portal>
-    <AlertDialog.Overlay 
-      transition={fade} 
-      transitionConfig={{ duration: 100 }}
-      class="fixed inset-0 z-50 bg-black/80" 
+    <AlertDialog.Overlay
+      class="fixed inset-0 z-50 bg-black/80"
     />
-    <AlertDialog.Content 
-      transition={fade}
-      transitionConfig={{ duration: 100 }}
+    <AlertDialog.Content
       class="fixed text-white z-50 left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] rounded-xl w-full max-w-[70%] h-fit p-8 bg-slate-800 shadow-lg"
     >
       <AlertDialog.Title class="text-xl text-white font-bold mb-4">
@@ -51,7 +47,7 @@
         <AlertDialog.Cancel class="basis-1/2 bg-slate-600 px-4 py-2 rounded-sm hover:bg-slate-700 cursor-pointer">
           Cancel
         </AlertDialog.Cancel>
-        <form 
+        <form
           use:enhance={() => {
             return async ({ result }) => {
               // @ts-ignore
@@ -61,8 +57,8 @@
               await applyAction(result);
             }
           }}
-          method="POST" 
-          action="/?/deletePost" 
+          method="POST"
+          action="/?/deletePost"
           class="basis-1/2"
         >
           <input name="post_uri" type="hidden" value={data.post.uri} />
@@ -85,9 +81,9 @@
       <div class="text-sm flex gap-2 items-center">
         <a href={`/p/${data.post.author.handle}`} >
           {#if data.post.author.avatar}
-            <img 
-              src={data.post.author.avatar} 
-              alt={`${data.post.author.handle} profile picture`} 
+            <img
+              src={data.post.author.avatar}
+              alt={`${data.post.author.handle} profile picture`}
               class="size-8 rounded-sm"
             />
           {:else}
@@ -97,7 +93,7 @@
         <div class="flex flex-col hover:underline ">
           <a href={`/p/${data.post.author.handle}`} >
             <p class="flex gap-1 items-center">
-              {data.post.author.displayName} 
+              {data.post.author.displayName}
               <span class="text-xs">@{data.post.author.handle}</span>
             </p>
           </a>
@@ -113,41 +109,41 @@
       <div class="flex gap-2 items-center">
         {#if data.reason}
           <Icon icon="bx:repost" />
-          <Tooltip.Root>
-            <Tooltip.Trigger>
-              <a href={`/p/${data.reason.by!.handle || "unknown"}`}>
-                <img 
-                  src={data.reason.by!.avatar} 
-                  alt={`${data.reason.by!.handle || "unknown"} profile picture`} 
-                  class="size-8 rounded-sm"
-                />
-              </a>
-            </Tooltip.Trigger>
-            <Tooltip.Content
-              transition={fade}
-              transitionConfig={{ duration: 150 }}
-              sideOffset={8}
-              side="bottom"
-            >
-              <div class="bg-white">
-                <Tooltip.Arrow class="rounded-[2px] border-l border-t border-dark-10" />
-              </div>
-              <div
-                class="rounded-sm flex flex-col justify-center rounded-input border border-dark-10 bg-white px-2 py-1 text-xs font-medium shadow-popover outline-hidden"
-              >
-                <p class="text-xs font-bold">{data.reason.by!.displayName || "unknown"}</p>
-                <p class="text-xs">@{data.reason.by!.handle || "unknown"}</p>
-              </div>
-            </Tooltip.Content>
-          </Tooltip.Root>
+					<Tooltip.Provider>
+						<Tooltip.Root>
+							<Tooltip.Trigger>
+								<a href={`/p/${data.reason.by.handle || "unknown"}`}>
+									<img
+										src={data.reason.by!.avatar}
+										alt={`${data.reason.by!.handle || "unknown"} profile picture`}
+										class="size-8 rounded-sm"
+									/>
+								</a>
+							</Tooltip.Trigger>
+							<Tooltip.Content
+								sideOffset={8}
+								side="bottom"
+							>
+								<div class="bg-white">
+									<Tooltip.Arrow class="rounded-[2px] border-l border-t border-dark-10" />
+								</div>
+								<div
+									class="rounded-sm flex flex-col justify-center rounded-input border border-dark-10 bg-white px-2 py-1 text-xs font-medium shadow-popover outline-hidden"
+								>
+									<p class="text-xs font-bold">{data.reason.by!.displayName || "unknown"}</p>
+									<p class="text-xs">@{data.reason.by!.handle || "unknown"}</p>
+								</div>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
         {/if}
       </div>
     </section>
-      
+
     {#if data.reply}
       <div class="flex gap-2 items-center text-sm font-light">
         <Icon icon="ic:baseline-reply" />
-        <a 
+        <a
           href={`/p/${
             // @ts-ignore
             data.reply.parent.author?.handle ?? "/"
@@ -155,7 +151,7 @@
         >
           <p class="hover:underline">Reply to
           {
-            // @ts-ignore 
+            // @ts-ignore
             data.reply.parent.author?.handle ?? "unknown"
           }
           </p>
@@ -164,9 +160,9 @@
     {/if}
 
     <p class="text-sm prose prose-invert prose-p:text-white prose-sm prose-pink">
-      {@html 
+      {@html
         // @ts-ignore
-        data.html 
+        data.html
       }
     </p>
 
@@ -181,33 +177,33 @@
             <Icon icon="ph:wrench" class="size-6" />
           </button>
           <button onclick={() => toastError("Log in to bookmark")} class="flex gap-1 justify-self-start">
-            <Icon 
+            <Icon
               icon={isBookmarked ? "mingcute:bookmark-fill" : "mingcute:bookmark-line"}
-              class="size-6" 
+              class="size-6"
             />
           </button>
         {:else}
-          <DropdownMenu.Root> 
+          <DropdownMenu.Root>
             <DropdownMenu.Trigger class="flex gap-1 justify-self-start">
               <Icon icon="ph:wrench" class="size-6" />
             </DropdownMenu.Trigger>
 
-            <DropdownMenu.Content 
+            <DropdownMenu.Content
               class="flex flex-col gap-2 bg-slate-800 min-w-12 h-fit p-2 rounded-lg shadow-lg border border-slate-600 text-sm text-white"
             >
               {#if data.post.author.did === user.did}
-                <DropdownMenu.Item 
+                <DropdownMenu.Item
                   onclick={() => isDeleteDialogOpen = true}
                   class="text-red-400 cursor-pointer flex items-center px-2 py-1 gap-2 hover:bg-white/5 transition-all duration-150 rounded-sm"
                 >
                   <Icon icon="ph:trash" class="size-4" />
-                  <p>Delete post</p> 
+                  <p>Delete post</p>
                 </DropdownMenu.Item>
               {/if}
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           <form
-            method="POST" 
+            method="POST"
             action="/?/bookmarkPost"
             use:enhance={() => {
               return async ({ result }) => {
@@ -218,14 +214,14 @@
                 }
                 await applyAction(result);
               }
-            }} 
+            }}
           >
             <input name="post_uri" type="hidden" value={data.post.uri} />
             <input name="is_bookmarked" type="hidden" value={isBookmarked} />
             <button type="submit" class="flex gap-1 justify-self-start">
-              <Icon 
+              <Icon
                 icon={isBookmarked ? "mingcute:bookmark-fill" : "mingcute:bookmark-line"}
-                class="size-6" 
+                class="size-6"
               />
             </button>
           </form>
@@ -250,9 +246,9 @@
           <Icon icon="iconamoon:comment" class="size-6" />
           {data.post.replyCount}
         </a>
-        <form 
-          method="POST" 
-          action="/?/toggleRepostPost" 
+        <form
+          method="POST"
+          action="/?/toggleRepostPost"
           use:enhance={() => {
               return async ({ result }) => {
                 // @ts-ignore
@@ -270,16 +266,16 @@
           <input name="post_uri" type="hidden" value={data.post.uri} />
           <input name="post_cid" type="hidden" value={data.post.cid} />
           <button type="submit" class="flex gap-1">
-            <Icon 
-              icon="bx:repost" 
-              class={`size-6 ${repostUri ? "text-green-500" : "text-white"}`} 
+            <Icon
+              icon="bx:repost"
+              class={`size-6 ${repostUri ? "text-green-500" : "text-white"}`}
             />
             {reposts}
           </button>
         </form>
-        <form 
-          method="POST" 
-          action="/?/toggleLikePost" 
+        <form
+          method="POST"
+          action="/?/toggleLikePost"
           use:enhance={() => {
               return async ({ result }) => {
                 // @ts-ignore
@@ -297,9 +293,9 @@
           <input name="post_uri" type="hidden" value={data.post.uri} />
           <input name="post_cid" type="hidden" value={data.post.cid} />
           <button type="submit" class="flex gap-1">
-            <Icon 
+            <Icon
               icon={likeUri ? "prime:heart-fill" : "prime:heart"}
-              class={`size-6 ${likeUri ? "text-red-500" : "text-white"}`} 
+              class={`size-6 ${likeUri ? "text-red-500" : "text-white"}`}
             />
             {likes}
           </button>
